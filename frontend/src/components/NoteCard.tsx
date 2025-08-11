@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Note, LocalNote } from '@/types';
@@ -36,21 +36,89 @@ const NoteCard: React.FC<NoteCardProps> = ({
     return date.toLocaleDateString();
   };
 
+  if (viewMode === 'list') {
+    return (
+      <Card
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+        className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
+      >
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="font-semibold text-xl line-clamp-1 flex-1 mr-4">
+                  {note.title || 'Untitled'}
+                </h3>
+                
+                {/* Delete button - show on hover */}
+                <div
+                  className={`flex items-center space-x-1 transition-opacity duration-200 ${
+                    isHovered ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete();
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <p className="text-gray-600 text-base leading-relaxed mb-4 line-clamp-2">
+                {note.content || 'Start writing...'}
+              </p>
+
+              <div className="flex items-center justify-between">
+                {/* Tags */}
+                {note.tags && note.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {note.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 ml-auto">
+                  {/* Local indicator */}
+                  {'isLocal' in note && note.isLocal && (
+                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
+                      Local
+                    </span>
+                  )}
+                  
+                  <span className="text-sm text-gray-400">{formatDate(note.createdAt)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Grid view (existing code)
   return (
     <Card
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
-      className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white ${
-        viewMode === 'list' ? 'flex' : ''
-      }`}
+      className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
     >
-      <CardContent
-        className={`p-6 ${
-          viewMode === 'list' ? 'flex-1 flex items-center space-x-4' : ''
-        }`}
-      >
-        <div className={viewMode === 'list' ? 'flex-1' : ''}>
+      <CardContent className="p-6">
+        <div>
           <div className="flex items-start justify-between mb-3">
             <h3 className="font-semibold text-lg line-clamp-1 flex-1">
               {note.title || 'Untitled'}
@@ -65,7 +133,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete();
@@ -76,11 +144,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
             </div>
           </div>
 
-          <p
-            className={`text-gray-600 text-sm leading-relaxed mb-4 ${
-              viewMode === 'list' ? 'line-clamp-1' : 'line-clamp-3'
-            }`}
-          >
+          <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
             {note.content || 'Start writing...'}
           </p>
 
@@ -90,7 +154,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               {note.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                  className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200 transition-colors"
                 >
                   {tag}
                 </span>

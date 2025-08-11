@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Tip from '@/components/Tip';
 import NotesList from '@/components/NotesList';
 import AuthDialog from '@/components/AuthDialog';
+import FilterMenu from '@/components/FilterMenu';
 import type { Note, LocalNote } from '@/types';
-import { Filter } from 'lucide-react';
+import type { FilterOptions } from '@/components/FilterMenu';
 import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
+import { useNoteFilters } from '@/hooks/useNoteFilters';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +23,15 @@ const Home: React.FC = () => {
   const [isAuthMode, setIsAuthMode] = useState<'login' | 'register'>('login');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Filter options
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+    showFavorites: false,
+    showRecent: false,
+    timeRange: 'all'
+  });
   
   // Auth form state
   const [isAuthLoading, setIsAuthLoading] = useState(false);
@@ -144,10 +154,8 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
-  const filteredNotes = notes.filter(note => 
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Use the custom hook for filtering and searching
+  const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions);
 
   return (
     <div className="min-h-screen bg-white text-black font-inter">
@@ -171,24 +179,24 @@ const Home: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
-              <p className="text-gray-500">
-                {isLoading ? 'Loading...' : `${filteredNotes.length} notes`}
-                {!isLoggedIn && filteredNotes.length > 0 && (
-                  <span className="text-amber-600 ml-2">(saved locally)</span>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <span>
+                  {isLoading ? 'Loading...' : `${stats.filteredCount} of ${stats.totalNotes} notes`}
+                </span>
+                {!isLoggedIn && stats.localNotes > 0 && (
+                  <span className="text-amber-600">({stats.localNotes} saved locally)</span>
                 )}
-              </p>
+                {stats.hasFilters && (
+                  <span className="text-blue-600">(filtered)</span>
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {/* Filter Button moved from Sidebar */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 w-10 rounded-lg hover:bg-gray-100"
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
-
+            <div className="flex items-center gap-3">
+              <FilterMenu 
+                filterOptions={filterOptions}
+                onFilterChange={setFilterOptions}
+              />
               <Tip isLoggedIn={isLoggedIn} onSignInClick={handleSignInClick} />
             </div>
           </div>

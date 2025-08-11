@@ -60,11 +60,6 @@ const Header: React.FC<HeaderProps> = ({
     <nav className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
       <div className="flex items-center space-x-8">
         <h1 className="text-2xl font-semibold tracking-tight">Notes</h1>
-        <div className="hidden md:flex items-center space-x-6 text-sm">
-          <button className="hover:text-gray-600 transition-colors font-medium">All Notes</button>
-          <button className="hover:text-gray-600 transition-colors">Recent</button>
-          <button className="hover:text-gray-600 transition-colors">Favorites</button>
-        </div>
       </div>
 
       <div className="flex items-center space-x-4">
@@ -81,12 +76,12 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* View Toggle */}
-        <div className="flex items-center border border-gray-200 rounded-lg p-1">
+        <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('grid')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
           >
             <Grid3X3 className="h-4 w-4" />
           </Button>
@@ -94,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('list')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
           >
             <List className="h-4 w-4" />
           </Button>
@@ -103,7 +98,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full border border-gray-200 hover:border-gray-300">
+            <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">
               <User className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
