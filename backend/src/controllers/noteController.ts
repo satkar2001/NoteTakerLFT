@@ -39,7 +39,7 @@ export const createNote = async (req: Request, res: Response) => {
   }
 };
 
-// Get all notes for the logged-in user
+// Get all notes for the logged-in user with pagination and filtering
 export const getNotes = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
@@ -47,12 +47,68 @@ export const getNotes = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const notes = await prisma.note.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+    // Pagination parameters
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const skip = (page - 1) * limit;
 
-    res.json(notes);
+    // Filtering parameters
+    const search = req.query.search as string;
+    const tags = req.query.tags as string;
+    const showFavorites = req.query.favorites === 'true';
+
+    // Sorting parameters
+    const sortBy = req.query.sortBy as string || 'createdAt';
+    const sortOrder = req.query.sortOrder as string || 'desc';
+
+    // Build where clause
+    const where: any = { userId };
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } },
+        { tags: { hasSome: [search] } }
+      ];
+    }
+
+    if (tags) {
+      const tagArray = tags.split(',').map(tag => tag.trim());
+      where.tags = { hasSome: tagArray };
+    }
+
+    if (showFavorites) {
+      where.tags = { has: 'favorite' };
+    }
+
+    // Build orderBy clause
+    const orderBy: any = {};
+    orderBy[sortBy] = sortOrder;
+
+    // Get notes with pagination
+    const [notes, totalCount] = await Promise.all([
+      prisma.note.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      prisma.note.count({ where })
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.json({
+      notes,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch notes' });
   }
@@ -92,7 +148,7 @@ export const updateNote = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { title, content, tags } = req.body;
     const userId = (req as any).userId;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
@@ -101,13 +157,20 @@ export const updateNote = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Note ID is required' });
     }
 
-    const updatedNote = await prisma.note.update({
+    const note = await prisma.note.findFirst({
       where: { id, userId },
-      data: { 
-        title, 
-        content, 
+    });
+
+    if (!note) {
+      return res.status(404).json({ error: 'Note not found or unauthorized' });
+    }
+
+    const updatedNote = await prisma.note.update({
+      where: { id },
+      data: {
+        title,
+        content,
         tags: tags || [],
-        updatedAt: new Date()
       },
     });
 
@@ -122,7 +185,7 @@ export const deleteNote = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const userId = (req as any).userId;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
@@ -131,13 +194,17 @@ export const deleteNote = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Note ID is required' });
     }
 
-    const note = await prisma.note.deleteMany({
+    const note = await prisma.note.findFirst({
       where: { id, userId },
     });
 
-    if (note.count === 0) {
+    if (!note) {
       return res.status(404).json({ error: 'Note not found or unauthorized' });
     }
+
+    await prisma.note.delete({
+      where: { id },
+    });
 
     res.json({ message: 'Note deleted successfully' });
   } catch (error) {
@@ -145,35 +212,38 @@ export const deleteNote = async (req: Request, res: Response) => {
   }
 };
 
-// Convert local notes to permanent notes after signup
+// Convert local notes to permanent notes
 export const convertLocalNotes = async (req: Request, res: Response) => {
   try {
-    const { localNotes } = req.body;
+    const { notes } = req.body;
     const userId = (req as any).userId;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const convertedNotes = [];
-    
-    for (const localNote of localNotes) {
-      const note = await prisma.note.create({
-        data: {
-          title: localNote.title,
-          content: localNote.content,
-          tags: localNote.tags || [],
-          userId,
-        },
-      });
-      convertedNotes.push(note);
+    if (!Array.isArray(notes)) {
+      return res.status(400).json({ error: 'Notes array is required' });
     }
 
+    const convertedNotes = await Promise.all(
+      notes.map(note => 
+        prisma.note.create({
+          data: {
+            title: note.title,
+            content: note.content,
+            tags: note.tags || [],
+            userId,
+          },
+        })
+      )
+    );
+
     res.json({ 
-      message: 'Local notes converted successfully',
+      message: `${convertedNotes.length} notes converted successfully`,
       notes: convertedNotes 
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to convert local notes' });
+    res.status(500).json({ error: 'Failed to convert notes' });
   }
 };
