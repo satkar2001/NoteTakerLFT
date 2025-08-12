@@ -39,6 +39,7 @@ interface HeaderProps {
   viewMode: 'grid' | 'list';
   setViewMode: (mode: 'grid' | 'list') => void;
   isLoggedIn: boolean;
+  user?: { name: string; email: string } | null;
   setIsLoggedIn: (loggedIn: boolean) => void;
   setShowAuthDialog: (show: boolean) => void;
   setIsAuthMode: (mode: 'login' | 'register') => void;
@@ -51,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   viewMode,
   setViewMode,
   isLoggedIn,
+  user,
   setIsLoggedIn,
   setShowAuthDialog,
   setIsAuthMode,
@@ -102,18 +104,14 @@ const Header: React.FC<HeaderProps> = ({
               <User className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            {isLoggedIn ? (
+          <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg">
+            {isLoggedIn && user ? (
               <>
                 <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">John Doe</p>
-                  <p className="text-xs text-gray-500">john@example.com</p>
+                  <p className="text-sm font-medium">{user.name || 'User'}</p>
+                  <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={onLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out

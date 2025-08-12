@@ -11,6 +11,7 @@ interface NotesListProps {
   viewMode: ViewMode;
   searchQuery: string;
   onDeleteNote: (noteId: string) => void;
+  onToggleFavorite: (noteId: string) => void;
   onNoteClick: (noteId: string) => void;
   isLoading: boolean;
 }
@@ -20,6 +21,7 @@ const NotesList: React.FC<NotesListProps> = ({
   viewMode,
   searchQuery,
   onDeleteNote,
+  onToggleFavorite,
   onNoteClick,
   isLoading,
 }) => {
@@ -66,7 +68,9 @@ const NotesList: React.FC<NotesListProps> = ({
           onMouseEnter={() => setHoveredNote(note.id)}
           onMouseLeave={() => setHoveredNote(null)}
           onDelete={() => onDeleteNote(note.id)}
+          onToggleFavorite={() => onToggleFavorite(note.id)}
           onClick={() => onNoteClick(note.id)}
+          isFavorite={note.tags.some(tag => tag.toLowerCase() === 'favorite')}
         />
       ))}
     </div>

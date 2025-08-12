@@ -7,72 +7,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Filter, Clock, Star, ArrowUpDown } from 'lucide-react';
+import { Filter, Star, Tag } from 'lucide-react';
 
 export interface FilterOptions {
-  sortBy: 'createdAt' | 'title' | 'updatedAt';
-  sortOrder: 'asc' | 'desc';
   showFavorites: boolean;
-  showRecent: boolean;
-  timeRange: 'all' | 'today' | 'week' | 'month';
+  selectedTags: string[];
 }
 
 interface FilterMenuProps {
   filterOptions: FilterOptions;
   onFilterChange: (options: FilterOptions) => void;
+  availableTags: string[];
 }
 
-const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange }) => {
+const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange, availableTags }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleSortChange = (sortBy: FilterOptions['sortBy']) => {
-    onFilterChange({ ...filterOptions, sortBy });
-  };
-
-  const handleSortOrderChange = (sortOrder: 'asc' | 'desc') => {
-    onFilterChange({ ...filterOptions, sortOrder });
-  };
-
-  const handleTimeRangeChange = (timeRange: FilterOptions['timeRange']) => {
-    onFilterChange({ ...filterOptions, timeRange });
-  };
 
   const toggleFavorites = () => {
     onFilterChange({ ...filterOptions, showFavorites: !filterOptions.showFavorites });
   };
 
-  const toggleRecent = () => {
-    onFilterChange({ ...filterOptions, showRecent: !filterOptions.showRecent });
+  const toggleTag = (tag: string) => {
+    const newSelectedTags = filterOptions.selectedTags.includes(tag)
+      ? filterOptions.selectedTags.filter(t => t !== tag)
+      : [...filterOptions.selectedTags, tag];
+
+    onFilterChange({ ...filterOptions, selectedTags: newSelectedTags });
   };
 
   const resetFilters = () => {
     onFilterChange({
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
       showFavorites: false,
-      showRecent: false,
-      timeRange: 'all'
+      selectedTags: []
     });
   };
 
-  const getSortLabel = () => {
-    const sortLabels = {
-      createdAt: 'Date',
-      title: 'Title',
-      updatedAt: 'Last Modified'
-    };
-    return sortLabels[filterOptions.sortBy];
-  };
-
-  const getTimeRangeLabel = () => {
-    const timeLabels = {
-      all: 'All Time',
-      today: 'Today',
-      week: 'This Week',
-      month: 'This Month'
-    };
-    return timeLabels[filterOptions.timeRange];
-  };
+  const hasActiveFilters = filterOptions.showFavorites || filterOptions.selectedTags.length > 0;
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -84,107 +54,57 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange }
         >
           <Filter className="h-4 w-4 mr-2" />
           Filters
-          {filterOptions.showFavorites || filterOptions.showRecent || filterOptions.timeRange !== 'all' ? (
+          {hasActiveFilters && (
             <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
-          ) : null}
+          )}
         </Button>
       </DropdownMenuTrigger>
-      
-      <DropdownMenuContent align="end" className="w-64 p-2">
-        {/* Sort Options */}
-        <div className="px-2 py-1.5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Sort By</p>
-          <div className="space-y-1">
-            {(['createdAt', 'title', 'updatedAt'] as const).map((sortBy) => (
-              <DropdownMenuItem
-                key={sortBy}
-                onClick={() => handleSortChange(sortBy)}
-                className={`flex items-center justify-between cursor-pointer ${
-                  filterOptions.sortBy === sortBy ? 'bg-gray-100' : ''
-                }`}
-              >
-                <span>{sortLabels[sortBy]}</span>
-                {filterOptions.sortBy === sortBy && (
-                  <ArrowUpDown className="h-3 w-3 text-blue-600" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </div>
-        </div>
 
-        <DropdownMenuSeparator />
-
-        {/* Sort Order */}
-        <div className="px-2 py-1.5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Order</p>
-          <div className="flex space-x-1">
-            <Button
-              size="sm"
-              variant={filterOptions.sortOrder === 'asc' ? 'default' : 'outline'}
-              onClick={() => handleSortOrderChange('asc')}
-              className="flex-1 h-8 text-xs"
-            >
-              Ascending
-            </Button>
-            <Button
-              size="sm"
-              variant={filterOptions.sortOrder === 'desc' ? 'default' : 'outline'}
-              onClick={() => handleSortOrderChange('desc')}
-              className="flex-1 h-8 text-xs"
-            >
-              Descending
-            </Button>
-          </div>
-        </div>
-
-        <DropdownMenuSeparator />
-
-        {/* Time Range */}
-        <div className="px-2 py-1.5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Time Range</p>
-          <div className="space-y-1">
-            {(['all', 'today', 'week', 'month'] as const).map((timeRange) => (
-              <DropdownMenuItem
-                key={timeRange}
-                onClick={() => handleTimeRangeChange(timeRange)}
-                className={`flex items-center cursor-pointer ${
-                  filterOptions.timeRange === timeRange ? 'bg-gray-100' : ''
-                }`}
-              >
-                <Clock className="h-3 w-3 mr-2 text-gray-400" />
-                {timeLabels[timeRange]}
-              </DropdownMenuItem>
-            ))}
-          </div>
-        </div>
-
-        <DropdownMenuSeparator />
-
-        {/* Quick Filters */}
+      <DropdownMenuContent align="end" className="w-64 p-2 bg-white border border-gray-200 shadow-lg">
+        {/* Favorites Filter */}
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Quick Filters</p>
-          <div className="space-y-1">
-            <DropdownMenuItem
-              onClick={toggleFavorites}
-              className={`flex items-center cursor-pointer ${
-                filterOptions.showFavorites ? 'bg-gray-100' : ''
-              }`}
-            >
-              <Star className={`h-3 w-3 mr-2 ${
-                filterOptions.showFavorites ? 'text-yellow-500 fill-current' : 'text-gray-400'
-              }`} />
-              Favorites
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem
-              onClick={toggleRecent}
-              className={`flex items-center cursor-pointer ${
-                filterOptions.showRecent ? 'bg-gray-100' : ''
-              }`}
-            >
-              <Clock className="h-3 w-3 mr-2 text-gray-400" />
-              Recent
-            </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={toggleFavorites}
+            className={`flex items-center cursor-pointer ${
+              filterOptions.showFavorites ? 'bg-gray-100' : ''
+            }`}
+          >
+            <Star className={`h-3 w-3 mr-2 ${
+              filterOptions.showFavorites ? 'text-yellow-500 fill-current' : 'text-gray-400'
+            }`} />
+            Favorites
+          </DropdownMenuItem>
+        </div>
+
+        <DropdownMenuSeparator />
+
+        {/* Tags Filter */}
+        <div className="px-2 py-1.5">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Tags</p>
+          <div className="space-y-1 max-h-32 overflow-y-auto">
+            {availableTags.length === 0 ? (
+              <p className="text-xs text-gray-400 px-2">No tags available</p>
+            ) : (
+              availableTags.map((tag) => (
+                <DropdownMenuItem
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`flex items-center cursor-pointer ${
+                    filterOptions.selectedTags.includes(tag) ? 'bg-gray-100' : ''
+                  }`}
+                >
+                  <Tag className="h-3 w-3 mr-2 text-gray-400" />
+                  <span className="flex-1">{tag}</span>
+                  <input
+                    type="checkbox"
+                    checked={filterOptions.selectedTags.includes(tag)}
+                    onChange={() => toggleTag(tag)}
+                    className="ml-2"
+                  />
+                </DropdownMenuItem>
+              ))
+            )}
           </div>
         </div>
 
@@ -204,19 +124,6 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange }
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
-
-const sortLabels = {
-  createdAt: 'Date',
-  title: 'Title',
-  updatedAt: 'Last Modified'
-};
-
-const timeLabels = {
-  all: 'All Time',
-  today: 'Today',
-  week: 'This Week',
-  month: 'This Month'
 };
 
 export default FilterMenu;

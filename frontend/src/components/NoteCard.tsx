@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Star } from 'lucide-react';
+import { Trash2, Star, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Note, LocalNote } from '@/types';
@@ -13,7 +13,9 @@ interface NoteCardProps {
   onMouseEnter: () => void;
   onMouseLeave: () => void;
   onDelete: () => void;
+  onToggleFavorite: () => void;
   onClick: () => void;
+  isFavorite?: boolean;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({
@@ -23,7 +25,9 @@ const NoteCard: React.FC<NoteCardProps> = ({
   onMouseEnter,
   onMouseLeave,
   onDelete,
+  onToggleFavorite,
   onClick,
+  isFavorite = false,
 }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -52,7 +56,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
                   {note.title || 'Untitled'}
                 </h3>
                 
-                {/* Delete button - show on hover */}
+                {/* Action buttons - show on hover */}
                 <div
                   className={`flex items-center space-x-1 transition-opacity duration-200 ${
                     isHovered ? 'opacity-100' : 'opacity-0'
@@ -68,6 +72,22 @@ const NoteCard: React.FC<NoteCardProps> = ({
                     }}
                   >
                     <Trash2 className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-8 w-8 p-0 transition-colors ${
+                      isFavorite 
+                        ? 'text-red-500 hover:bg-red-50' 
+                        : 'text-gray-400 hover:bg-red-50 hover:text-red-500'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite();
+                    }}
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
                   </Button>
                 </div>
               </div>
@@ -109,7 +129,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
     );
   }
 
-  // Grid view (existing code)
+  // Grid view
   return (
     <Card
       onMouseEnter={onMouseEnter}
@@ -124,7 +144,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               {note.title || 'Untitled'}
             </h3>
 
-            {/* Delete button - show on hover */}
+            {/* Action buttons - show on hover */}
             <div
               className={`flex items-center space-x-1 transition-opacity duration-200 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
@@ -140,6 +160,22 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 }}
               >
                 <Trash2 className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`h-8 w-8 p-0 transition-colors ${
+                  isFavorite 
+                    ? 'text-red-500 hover:bg-red-50' 
+                    : 'text-gray-400 hover:bg-red-50 hover:text-red-500'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite();
+                }}
+              >
+                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
               </Button>
             </div>
           </div>

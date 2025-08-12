@@ -15,6 +15,11 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
 }
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
@@ -27,9 +32,18 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
   return response.data;
 };
 
+export const getGoogleAuthUrl = async (): Promise<{ url: string }> => {
+  const response = await axios.get(`${API_URL}/google/url`);
+  return response.data;
+};
+
+export const googleAuth = async (code: string): Promise<AuthResponse> => {
+  const response = await axios.post(`${API_URL}/google`, { code });
+  return response.data;
+};
+
 export const logout = () => {
   localStorage.removeItem('token');
-  localStorage.removeItem('user');
 };
 
 export const getToken = (): string | null => {
@@ -41,5 +55,6 @@ export const setToken = (token: string) => {
 };
 
 export const isAuthenticated = (): boolean => {
-  return !!getToken();
+  const token = getToken();
+  return !!token;
 };

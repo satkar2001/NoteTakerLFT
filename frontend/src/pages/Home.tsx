@@ -6,8 +6,10 @@ import Tip from '@/components/Tip';
 import NotesList from '@/components/NotesList';
 import AuthDialog from '@/components/AuthDialog';
 import FilterMenu from '@/components/FilterMenu';
+import SortButton from '@/components/SortButton';
 import type { Note, LocalNote } from '@/types';
 import type { FilterOptions } from '@/components/FilterMenu';
+import type { SortOptions } from '@/components/SortButton';
 import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
@@ -19,18 +21,22 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [isAuthMode, setIsAuthMode] = useState<'login' | 'register'>('login');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  
+
   // Filter options
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
     showFavorites: false,
-    showRecent: false,
-    timeRange: 'all'
+    selectedTags: []
+  });
+
+  // Sort options
+  const [sortOptions, setSortOptions] = useState<SortOptions>({
+    sortBy: 'createdAt',
+    sortOrder: 'desc'
   });
   
   // Auth form state
@@ -41,9 +47,20 @@ const Home: React.FC = () => {
     const checkAuth = () => {
       const authenticated = isAuthenticated();
       setIsLoggedIn(authenticated);
+      
+      // Get user data from localStorage if authenticated
       if (authenticated) {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try {
+            setUser(JSON.parse(userData));
+          } catch (error) {
+            console.error('Failed to parse user data:', error);
+          }
+        }
         fetchNotes();
       } else {
+        setUser(null);
         loadLocalNotes();
       }
     };
@@ -67,6 +84,7 @@ const Home: React.FC = () => {
         // Token expired or invalid
         logout();
         setIsLoggedIn(false);
+        setUser(null);
         loadLocalNotes();
       }
     } finally {
@@ -82,16 +100,33 @@ const Home: React.FC = () => {
       } else {
         // Delete from local storage
         deleteLocalNote(noteId);
-        setNotes(prev => prev.filter(note => note.id !== noteId));
+    setNotes(prev => prev.filter(note => note.id !== noteId));
       }
     } catch (error: unknown) {
       console.error('Failed to delete note:', error);
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
         logout();
         setIsLoggedIn(false);
+        setUser(null);
         loadLocalNotes();
       }
     }
+  };
+
+  const handleToggleFavorite = (noteId: string) => {
+    // For now, we'll add/remove a "favorite" tag
+    // You can extend this to store favorites in localStorage or backend
+    setNotes(prev => prev.map(note => {
+      if (note.id === noteId) {
+        const hasFavorite = note.tags.some(tag => tag.toLowerCase() === 'favorite');
+        const newTags = hasFavorite 
+          ? note.tags.filter(tag => tag.toLowerCase() !== 'favorite')
+          : [...note.tags, 'favorite'];
+        
+        return { ...note, tags: newTags };
+      }
+      return note;
+    }));
   };
 
   const handleCreateNewNote = () => {
@@ -116,6 +151,11 @@ const Home: React.FC = () => {
       
       setToken(response.token);
       setIsLoggedIn(true);
+      setUser(response.user);
+      
+      // Store user data in localStorage
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
       setShowAuthDialog(false);
       
       // Convert local notes to permanent notes
@@ -145,6 +185,8 @@ const Home: React.FC = () => {
   const handleLogout = () => {
     logout();
     setIsLoggedIn(false);
+    setUser(null);
+    localStorage.removeItem('user');
     setNotes([]);
     loadLocalNotes();
   };
@@ -155,7 +197,7 @@ const Home: React.FC = () => {
   };
 
   // Use the custom hook for filtering and searching
-  const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions);
+  const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions, sortOptions);
 
   return (
     <div className="min-h-screen bg-white text-black font-inter">
@@ -165,6 +207,7 @@ const Home: React.FC = () => {
         viewMode={viewMode}
         setViewMode={setViewMode}
         isLoggedIn={isLoggedIn}
+        user={user}
         setIsLoggedIn={setIsLoggedIn}
         setShowAuthDialog={setShowAuthDialog}
         setIsAuthMode={setIsAuthMode}
@@ -177,8 +220,8 @@ const Home: React.FC = () => {
         <main className="flex-1 p-8">
           {/* Stats Bar */}
           <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
+  <div>
+    <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <span>
                   {isLoading ? 'Loading...' : `${stats.filteredCount} of ${stats.totalNotes} notes`}
@@ -190,22 +233,28 @@ const Home: React.FC = () => {
                   <span className="text-blue-600">(filtered)</span>
                 )}
               </div>
-            </div>
+  </div>
 
             <div className="flex items-center gap-3">
               <FilterMenu 
                 filterOptions={filterOptions}
                 onFilterChange={setFilterOptions}
+                availableTags={stats.availableTags}
+              />
+              <SortButton
+                sortOptions={sortOptions}
+                onSortChange={setSortOptions}
               />
               <Tip isLoggedIn={isLoggedIn} onSignInClick={handleSignInClick} />
-            </div>
-          </div>
+  </div>
+</div>
 
           <NotesList
             notes={filteredNotes}
             viewMode={viewMode}
             searchQuery={searchQuery}
             onDeleteNote={handleDeleteNote}
+            onToggleFavorite={handleToggleFavorite}
             onNoteClick={handleNoteClick}
             isLoading={isLoading}
           />

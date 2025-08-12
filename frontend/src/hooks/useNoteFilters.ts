@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 import type { Note, LocalNote } from '@/types';
 import type { FilterOptions } from '@/components/FilterMenu';
+import type { SortOptions } from '@/components/SortButton';
 
 type AnyNote = Note | LocalNote;
 
 export const useNoteFilters = (
   notes: AnyNote[],
   searchQuery: string,
-  filterOptions: FilterOptions
+  filterOptions: FilterOptions,
+  sortOptions: SortOptions
 ) => {
   const filteredAndSortedNotes = useMemo(() => {
     let filteredNotes = [...notes];
@@ -23,22 +25,6 @@ export const useNoteFilters = (
       );
     }
 
-    // Apply time range filter
-    if (filterOptions.timeRange !== 'all') {
-      const now = new Date();
-      const timeRanges = {
-        today: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-        week: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-        month: new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
-      };
-
-      const cutoffDate = timeRanges[filterOptions.timeRange];
-      filteredNotes = filteredNotes.filter(note => {
-        const noteDate = new Date(note.createdAt);
-        return noteDate >= cutoffDate;
-      });
-    }
-
     // Apply favorites filter
     if (filterOptions.showFavorites) {
       // For now, we'll show notes with "favorite" tag
@@ -48,13 +34,11 @@ export const useNoteFilters = (
       );
     }
 
-    // Apply recent filter
-    if (filterOptions.showRecent) {
-      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      filteredNotes = filteredNotes.filter(note => {
-        const noteDate = new Date(note.createdAt);
-        return noteDate >= oneWeekAgo;
-      });
+    // Apply tags filter
+    if (filterOptions.selectedTags.length > 0) {
+      filteredNotes = filteredNotes.filter(note =>
+        note.tags.some(tag => filterOptions.selectedTags.includes(tag))
+      );
     }
 
     // Apply sorting
@@ -62,7 +46,7 @@ export const useNoteFilters = (
       let aValue: string | Date;
       let bValue: string | Date;
 
-      switch (filterOptions.sortBy) {
+      switch (sortOptions.sortBy) {
         case 'title':
           aValue = a.title || '';
           bValue = b.title || '';
@@ -80,16 +64,16 @@ export const useNoteFilters = (
       }
 
       if (aValue < bValue) {
-        return filterOptions.sortOrder === 'asc' ? -1 : 1;
+        return sortOptions.sortOrder === 'asc' ? -1 : 1;
       }
       if (aValue > bValue) {
-        return filterOptions.sortOrder === 'asc' ? 1 : -1;
+        return sortOptions.sortOrder === 'asc' ? 1 : -1;
       }
       return 0;
     });
 
     return filteredNotes;
-  }, [notes, searchQuery, filterOptions]);
+  }, [notes, searchQuery, filterOptions, sortOptions]);
 
   const stats = useMemo(() => {
     const totalNotes = notes.length;
@@ -97,16 +81,22 @@ export const useNoteFilters = (
     const localNotes = notes.filter(note => 'isLocal' in note && note.isLocal);
     const permanentNotes = totalNotes - localNotes.length;
 
+    // Get all unique tags from notes
+    const allTags = new Set<string>();
+    notes.forEach(note => {
+      note.tags.forEach(tag => allTags.add(tag));
+    });
+
     return {
       totalNotes,
       filteredCount,
       localNotes: localNotes.length,
       permanentNotes,
+      availableTags: Array.from(allTags).sort(),
       hasFilters: 
         searchQuery.trim() || 
         filterOptions.showFavorites || 
-        filterOptions.showRecent || 
-        filterOptions.timeRange !== 'all'
+        filterOptions.selectedTags.length > 0
     };
   }, [notes, filteredAndSortedNotes, searchQuery, filterOptions]);
 

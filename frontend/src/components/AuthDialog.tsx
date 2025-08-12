@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
+import { getGoogleAuthUrl, googleAuth } from '@/lib/authService';
 
 interface AuthDialogProps {
   open: boolean;
@@ -44,9 +45,64 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
     await onSubmit(submitData);
   };
 
-  const handleGoogleAuth = () => {
-    // TODO: Implement Google OAuth
-    console.log('Google auth clicked');
+  const handleGoogleAuth = async () => {
+    try {
+      // Get Google auth URL
+      const { url } = await getGoogleAuthUrl();
+      
+      // Open Google auth popup
+      const popup = window.open(
+        url,
+        'google-auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+      
+      if (!popup) {
+        alert('Popup blocked! Please allow popups for this site.');
+        return;
+      }
+      
+      // Listen for auth completion
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          // Handle popup closed without auth
+        }
+      }, 1000);
+      
+      // Listen for message from popup
+      const handleMessage = async (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+          const { code } = event.data;
+          
+          try {
+            const response = await googleAuth(code);
+            // Store token and close dialog
+            localStorage.setItem('token', response.token);
+            onOpenChange(false);
+            
+            // Reload page to update auth state
+            window.location.reload();
+            
+          } catch (error) {
+            console.error('Google auth failed:', error);
+            alert('Google authentication failed. Please try again.');
+          }
+          
+          popup?.close();
+          clearInterval(checkClosed);
+          window.removeEventListener('message', handleMessage);
+        }
+      };
+      
+      window.addEventListener('message', handleMessage);
+      
+    } catch (error) {
+      console.error('Failed to get Google auth URL:', error);
+      alert('Failed to start Google authentication. Please try again.');
+    }
   };
 
   const switchMode = () => {
