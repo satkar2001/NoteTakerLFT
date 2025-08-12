@@ -22,7 +22,7 @@
 
 // components/Header.tsx
 import React from 'react';
-import { Search, User, Settings, LogOut, Grid3X3, List } from 'lucide-react';
+import { Search, User, LogOut, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -53,7 +53,6 @@ const Header: React.FC<HeaderProps> = ({
   setViewMode,
   isLoggedIn,
   user,
-  setIsLoggedIn,
   setShowAuthDialog,
   setIsAuthMode,
   onLogout,
