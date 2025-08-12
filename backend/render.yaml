@@ -1,0 +1,29 @@
+databases:
+  - name: notetaker-db
+    databaseName: notetaker
+    user: notetaker_user
+    plan: free
+
+services:
+  - type: web
+    name: notetaker-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: notetaker-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://notetaker-backend.onrender.com/auth/google/callback
+    healthCheckPath: /health

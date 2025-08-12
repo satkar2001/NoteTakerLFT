@@ -1,11 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc && npm run postbuild",
+    "postbuild": "prisma generate",
     "start": "node dist/server.js",
     "postinstall": "prisma generate"
   },

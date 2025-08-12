@@ -1,5 +1,20 @@
 {
-  "dependencies": {
-    "radix-ui": "^1.4.2"
+  "name": "notetaker-lft",
+  "version": "1.0.0",
+  "description": "Full-stack note-taking application",
+  "scripts": {
+    "dev:frontend": "cd frontend && pnpm run dev",
+    "dev:backend": "cd backend && pnpm run dev",
+    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "build:frontend": "cd frontend && pnpm run build",
+    "build:backend": "cd backend && pnpm run build",
+    "build": "pnpm run build:backend && pnpm run build:frontend",
+    "install:all": "pnpm install && cd frontend && pnpm install && cd ../backend && pnpm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
