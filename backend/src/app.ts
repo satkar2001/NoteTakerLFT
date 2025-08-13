@@ -10,6 +10,7 @@ import noteRoutes from './routes/noteRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
 import { specs } from './config/swagger.js';
+import prisma from './lib/prismaClient.js';
 
 const app: Application = express();
 
@@ -61,12 +62,27 @@ app.get('/auth/google/callback', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+app.get('/health', async (req: Request, res: Response) => {
+  try {
+    // Test database connection
+    await prisma.$queryRaw`SELECT 1`;
+    
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      database: 'connected'
+    });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      database: 'disconnected',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 app.use(notFound);
