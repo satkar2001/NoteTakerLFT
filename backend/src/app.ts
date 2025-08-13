@@ -31,17 +31,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
-// for swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'NoteTaker API Documentation'
 }));
 
-// Routes
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 
-// Health check
 app.get('/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
@@ -50,7 +50,6 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
-// 404 
 app.use(notFound);
 
 app.use(errorHandler);
