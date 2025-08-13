@@ -11,8 +11,10 @@ const options = {
     },
     servers: [
       {
-        url: 'https://notetaker-backend-jpgb.onrender.com',
-        description: 'Development server'
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://notetaker-backend-jpgb.onrender.com'
+          : 'https://notetaker-backend-jpgb.onrender.com',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
       }
     ],
     components: {
