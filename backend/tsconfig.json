@@ -1,45 +1,22 @@
-// {
-//   "compilerOptions": {
-//     "rootDir": "./src",
-//     "outDir": "./dist",
-//     "target": "ES2022",
-//     "module": "ESNext",
-//     "moduleResolution": "node",
-//     "lib": ["ES2022"],
-//     "allowSyntheticDefaultImports": true,
-//     "esModuleInterop": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "strict": true,
-//     "skipLibCheck": true,
-//     "sourceMap": true,
-//     "declaration": true,
-//     "declarationMap": true,
-//     "noUncheckedIndexedAccess": true,
-//     "exactOptionalPropertyTypes": true,
-//     "typeRoots": ["./node_modules/@types"]
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules", "dist"]
-// }
 {
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "target": "ES2020",
-    "module": "CommonJS",
+    "target": "ES2022",
+    "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2020"],
+    "lib": ["ES2022"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "noResolve": false,
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
