@@ -1,13 +1,3 @@
-// export function Tip() {
-//   return (
-//     <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-lg">
-//       <strong>Tip:</strong> Sign in to save your notes permanently
-//     </div>
-//   );
-// }
-
-
-// components/Tip.tsx
 import React from 'react';
 import { Button } from '@/components/ui/button';
 

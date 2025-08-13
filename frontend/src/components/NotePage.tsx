@@ -38,7 +38,6 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
     
     setIsLoading(true);
     try {
-      // Check if it's a local note first
       if (id.startsWith('local_')) {
         const localNote = getLocalNoteById(id);
         if (localNote) {
@@ -50,14 +49,12 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
         }
       }
 
-      // Try to load from backend if authenticated
       if (isAuthenticated()) {
         const loadedNote = await getNoteById(id);
         setNote(loadedNote);
         setTagsInput(loadedNote.tags.join(', '));
         setIsLocalNote(false);
       } else {
-        // Not authenticated, redirect to home
         navigate('/');
       }
     } catch (error) {
@@ -70,7 +67,7 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
 
   const handleSave = async () => {
     if (!note.title?.trim() && !note.content?.trim()) {
-      return; // Don't save empty notes
+      return; 
     }
 
     setIsSaving(true);
@@ -79,14 +76,12 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
       
       if (isNewNote) {
         if (isAuthenticated()) {
-          // Save to backend
           await createNote({
             title: note.title || 'Untitled',
             content: note.content || '',
             tags
           });
         } else {
-          // Save locally
           saveLocalNote({
             title: note.title || 'Untitled',
             content: note.content || '',
@@ -95,14 +90,12 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
         }
       } else if (id) {
         if (isLocalNote) {
-          // Update local note
           updateLocalNote(id, {
             title: note.title || 'Untitled',
             content: note.content || '',
             tags
           });
         } else if (isAuthenticated()) {
-          // Update backend note
           await updateNote(id, {
             title: note.title || 'Untitled',
             content: note.content || '',
@@ -150,7 +143,6 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <div className="border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <Button
@@ -188,10 +180,8 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
         </div>
       </div>
 
-      {/* Note Editor */}
       <div className="max-w-4xl mx-auto p-6">
         <div className="space-y-6">
-          {/* Title Input */}
           <div>
             <Input
               type="text"
@@ -202,7 +192,6 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
             />
           </div>
 
-          {/* Tags Input */}
           <div>
             <Input
               type="text"
@@ -213,7 +202,6 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
             />
           </div>
 
-          {/* Content Textarea */}
           <div className="flex-1">
             <Textarea
               placeholder="Start writing your note..."
@@ -223,7 +211,6 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
             />
           </div>
 
-          {/* Local Note Indicator */}
           {!isAuthenticated() && (
             <div className="text-center py-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-700 text-sm">

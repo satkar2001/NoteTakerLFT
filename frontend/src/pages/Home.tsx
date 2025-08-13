@@ -33,18 +33,15 @@ const Home: React.FC = () => {
     selectedTags: []
   });
 
-  // Sort options
   const [sortOptions, setSortOptions] = useState<SortOptions>({
     sortBy: 'createdAt',
     sortOrder: 'desc'
   });
   
-  // Auth form state
   const [isAuthSubmitLoading, setIsAuthSubmitLoading] = useState(false);
   const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    // Check if user is already authenticated
     const checkAuth = () => {
       const authenticated = isAuthenticated();
       const userData = localStorage.getItem('user');
@@ -84,7 +81,6 @@ const Home: React.FC = () => {
     } catch (error: unknown) {
       console.error('Failed to fetch notes:', error);
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
-        // Token expired or invalid
         handleLogout();
       }
     } finally {
@@ -150,7 +146,6 @@ const Home: React.FC = () => {
         email: response.user.email
       });
       
-      // Store user data in localStorage
       localStorage.setItem('user', JSON.stringify({
         name: response.user.name || '',
         email: response.user.email
@@ -158,7 +153,6 @@ const Home: React.FC = () => {
       
       setShowAuthDialog(false);
       
-      // Convert local notes to permanent notes
       const localNotes = getLocalNotes();
       if (localNotes.length > 0) {
         try {
@@ -169,7 +163,6 @@ const Home: React.FC = () => {
         }
       }
       
-      // Fetch permanent notes
       fetchNotes();
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'error' in error.response.data) {
@@ -183,7 +176,6 @@ const Home: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Clear all auth state
     logout();
     setIsLoggedIn(false);
     setUser(null);
@@ -198,7 +190,6 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
-  // Use the custom hook for filtering and searching
   const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions, sortOptions);
 
 
@@ -222,7 +213,7 @@ const Home: React.FC = () => {
         <Sidebar createNewNote={handleCreateNewNote} />
 
         <main className="flex-1 p-8">
-          {/* Stats Bar */}
+          {}
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
@@ -265,7 +256,7 @@ const Home: React.FC = () => {
         </main>
       </div>
 
-             {/* Auth Dialog */}
+             {}
        <AuthDialog
          open={showAuthDialog}
          onOpenChange={setShowAuthDialog}

@@ -102,14 +102,14 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
 
         <div className="space-y-6">
           
-          {/* Error Message */}
+          {}
           {error && (
             <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg border border-red-200">
               {error}
             </div>
           )}
           
-          {/* Form Fields */}
+          {}
           <form onSubmit={handleSubmit} className="space-y-4">
             {isAuthMode === 'register' && (
               <div>
@@ -173,7 +173,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
               )}
             </div>
             
-            {/* Submit Button */}
+            {}
                          <Button
                type="submit"
                disabled={isLoading}
@@ -190,7 +190,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             </Button>
           </form>
           
-          {/* Toggle Mode */}
+          {}
           <div className="text-center text-sm">
             <span className="text-gray-500">
               {isAuthMode === 'login' ? "Don't have an account? " : "Already have an account? "}
