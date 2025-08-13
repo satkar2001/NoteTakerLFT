@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
@@ -14,25 +14,18 @@ import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
 import { useNoteFilters } from '@/hooks/useNoteFilters';
-import { onAuthStateChanged, signOut } from '@/lib/firebase';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [notes, setNotes] = useState<(Note | LocalNote)[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Add auth loading state to prevent flickering
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [isAuthMode, setIsAuthMode] = useState<'login' | 'register'>('login');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  
-  // Track if auth has been initialized
-  const authInitialized = useRef(false);
-  const firebaseListenerSet = useRef(false);
 
   // Filter options
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
@@ -51,106 +44,32 @@ const Home: React.FC = () => {
   const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    // Single initialization function
-    const initializeAuth = async () => {
-      if (authInitialized.current) return;
-      authInitialized.current = true;
+    // Check if user is already authenticated
+    const checkAuth = () => {
+      const authenticated = isAuthenticated();
+      const userData = localStorage.getItem('user');
       
-      setIsAuthLoading(true);
-      
-      try {
-        // Check localStorage first (fastest)
-        const token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
-        
-        if (token && userStr) {
-          // Validate the stored auth
-          const isValid = isAuthenticated();
-          if (isValid) {
-            const userData = JSON.parse(userStr);
-            setIsLoggedIn(true);
-            setUser(userData);
-            await fetchNotes();
-            setIsAuthLoading(false);
-            return; // Exit early, user is authenticated
-          } else {
-            // Clear invalid tokens
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }
-        }
-        
-        // No valid localStorage auth, load local notes
-        loadLocalNotes();
-        setIsLoggedIn(false);
-        setUser(null);
-        
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsLoggedIn(false);
-        setUser(null);
-        loadLocalNotes();
-      } finally {
-        setIsAuthLoading(false);
-      }
-    };
-
-    // Set up Firebase listener only once
-    const setupFirebaseListener = () => {
-      if (firebaseListenerSet.current) return null;
-      firebaseListenerSet.current = true;
-      
-      return onAuthStateChanged((firebaseUser) => {
-        console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
-        
-        if (firebaseUser) {
-          console.log('Firebase user authenticated:', firebaseUser.displayName, firebaseUser.email);
-          
-          // Always update auth state when Firebase user is present
+      if (authenticated && userData) {
+        try {
+          const user = JSON.parse(userData);
           setIsLoggedIn(true);
-          setUser({
-            name: firebaseUser.displayName || '',
-            email: firebaseUser.email || ''
-          });
-          
-          // Store user data
-          localStorage.setItem('user', JSON.stringify({
-            name: firebaseUser.displayName || '',
-            email: firebaseUser.email || ''
-          }));
-          
-          // Get and store token
-          firebaseUser.getIdToken().then(token => {
-            localStorage.setItem('token', token);
-            console.log('Firebase token stored, fetching notes...');
-            fetchNotes();
-          });
-          
-          setIsAuthLoading(false);
-        } else if (!isAuthenticated()) {
-          // Only sign out if we don't have valid localStorage auth
-          console.log('Firebase user signed out, no localStorage auth');
+          setUser(user);
+          fetchNotes();
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
           setIsLoggedIn(false);
           setUser(null);
-          setIsAuthLoading(false);
+          loadLocalNotes();
         }
-      });
-    };
-
-    // Initialize auth first
-    initializeAuth();
-    
-    // Set up Firebase listener
-    const unsubscribe = setupFirebaseListener();
-    
-    // Cleanup
-    return () => {
-      if (unsubscribe) {
-        firebaseListenerSet.current = false;
-        unsubscribe();
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+        loadLocalNotes();
       }
     };
-  }, []); // Empty dependency array - only run once
+    
+    checkAuth();
+  }, []);
 
   const loadLocalNotes = () => {
     const localNotes = getLocalNotes();
@@ -263,13 +182,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Firebase sign out error:', error);
-    }
-    
+  const handleLogout = () => {
     // Clear all auth state
     logout();
     setIsLoggedIn(false);
@@ -278,9 +191,6 @@ const Home: React.FC = () => {
     localStorage.removeItem('token');
     setNotes([]);
     loadLocalNotes();
-    
-    // Reset auth initialization flag
-    authInitialized.current = false;
   };
 
   const handleSignInClick = () => {
@@ -291,17 +201,7 @@ const Home: React.FC = () => {
   // Use the custom hook for filtering and searching
   const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions, sortOptions);
 
-  // Show loading spinner during auth initialization
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-          <span className="text-lg">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-white text-black font-inter">
@@ -365,37 +265,16 @@ const Home: React.FC = () => {
         </main>
       </div>
 
-      {/* Auth Dialog */}
-      <AuthDialog
-        open={showAuthDialog}
-        onOpenChange={setShowAuthDialog}
-        isAuthMode={isAuthMode}
-        setIsAuthMode={setIsAuthMode}
-        onSubmit={handleAuthSubmit}
-        isLoading={isAuthSubmitLoading}
-        error={authError}
-        onGoogleAuthSuccess={async (user, token) => {
-          // Handle Google auth success
-          setIsLoggedIn(true);
-          setUser(user);
-          localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(user));
-          
-          // Convert local notes if any
-          const localNotes = getLocalNotes();
-          if (localNotes.length > 0) {
-            try {
-              await convertLocalNotes(localNotes);
-              clearLocalNotes();
-            } catch (error) {
-              console.error('Failed to convert local notes:', error);
-            }
-          }
-          
-          // Fetch notes
-          fetchNotes();
-        }}
-      />
+             {/* Auth Dialog */}
+       <AuthDialog
+         open={showAuthDialog}
+         onOpenChange={setShowAuthDialog}
+         isAuthMode={isAuthMode}
+         setIsAuthMode={setIsAuthMode}
+         onSubmit={handleAuthSubmit}
+         isLoading={isAuthSubmitLoading}
+         error={authError}
+       />
     </div>
   );
 };

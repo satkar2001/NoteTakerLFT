@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <nav className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
       <div className="flex items-center space-x-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Notes</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Note Taker LFT</h1>
       </div>
 
       <div className="flex items-center space-x-4">

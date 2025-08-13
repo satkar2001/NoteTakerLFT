@@ -1,261 +1,205 @@
-# NoteTaker - Full Stack Note-Taking Application
+# 📝 NoteTaker - Full-Stack Note Management Application
 
-A modern, full-stack note-taking application built with React, TypeScript, Node.js, and PostgreSQL. Features include user authentication, real-time note management, and a clean, responsive UI.
+A modern, responsive note-taking application built with React, TypeScript, and Node.js. Features user authentication, real-time note management, and a clean, intuitive interface.
 
-## 🚀 Features
+## ✨ Features
 
-### Core Features
-- **User Authentication**: Email/password and Google OAuth support
-- **Note Management**: Create, read, update, delete notes
-- **Local Storage**: Work offline with local note storage
-- **Search & Filter**: Advanced filtering and search capabilities
-- **Responsive Design**: Works on desktop and mobile devices
+- **User Authentication**: Secure email/password registration and login
+- **Note Management**: Create, edit, delete, and organize notes
+- **Rich Text Editor**: Full-featured editor with formatting options
+- **Search & Filter**: Find notes quickly with search and tag filtering
+- **Responsive Design**: Works seamlessly on desktop and mobile
+- **Offline Support**: Notes are saved locally when not authenticated
+- **Real-time Sync**: Notes sync across devices when logged in
 
-### Technical Features
-- **Frontend**: React 19 + TypeScript + Vite
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: JWT + bcrypt + Google OAuth
-- **UI**: Shadcn UI + Tailwind CSS
-- **Testing**: Jest + React Testing Library
-- **API Documentation**: Swagger/OpenAPI
-- **Logging**: Structured logging with file output
+## 🏗️ Architecture
 
-## 📋 Requirements Fulfilled
+### Frontend (React + TypeScript)
+- **React 18** with functional components and hooks
+- **TypeScript** for type safety and better development experience
+- **Vite** for fast development and optimized builds
+- **Tailwind CSS** for styling with shadcn/ui components
+- **React Router** for client-side routing
+- **Local Storage** for offline note persistence
 
-### ✅ Core Requirements
-- [x] Clean and responsive UI
-- [x] Frontend and backend validation
-- [x] Proper error handling and display
-- [x] Secure authentication mechanism
-- [x] Authorization and protected APIs
-- [x] RESTful API conventions
-- [x] Server-side pagination and filtering
-- [x] Normalized database design
+### Backend (Node.js + Express)
+- **Express.js** REST API with TypeScript
+- **Prisma ORM** for database operations
+- **PostgreSQL** for data persistence
+- **JWT** for secure authentication
+- **Swagger** for API documentation
+- **Winston** for structured logging
 
-### ✅ Preferred Expectations
-- [x] **Reusable FE Components**: Shadcn UI components + custom components
-- [x] **Unit Tests**: Jest + React Testing Library setup
-- [x] **Backend Logging**: Structured logging with file output
-- [x] **API Documentation**: Swagger/OpenAPI with interactive UI
-- [x] **Database Migrations**: Prisma migrations for schema changes
+### Database
+- **PostgreSQL** hosted on Render
+- **Prisma Migrations** for schema management
+- **User and Note models** with proper relationships
 
-## 🛠️ Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+ 
-- PostgreSQL
-- pnpm (recommended) or npm
+- npm or pnpm
+- PostgreSQL database
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd NoteTakerLFT
-```
+### Installation
 
-### 2. Install Dependencies
-```bash
-# Install all dependencies (frontend + backend)
-pnpm install
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/NoteTakerLFT.git
+   cd NoteTakerLFT
+   ```
 
-### 3. Database Setup
-```bash
-# Navigate to backend
-cd backend
+2. **Install dependencies**
+   ```bash
+   # Install root dependencies
+   npm install
+   
+   # Install backend dependencies
+   cd backend
+   npm install
+   
+   # Install frontend dependencies
+   cd ../frontend
+   npm install
+   ```
 
-# Set up your .env file
-cp .env.example .env
-# Edit .env with your database credentials
+3. **Set up environment variables**
+   
+   Create `.env` file in the `backend` directory:
+   ```env
+   DATABASE_URL="postgresql://username:password@localhost:5432/notetaker"
+   JWT_SECRET="your-super-secret-jwt-key"
+   NODE_ENV="development"
+   PORT=5000
+   ```
 
-# Run database migrations
-pnpm prisma generate
-pnpm prisma db push
-```
+4. **Set up the database**
+   ```bash
+   cd backend
+   npx prisma migrate dev
+   npx prisma generate
+   ```
 
-### 4. Environment Variables
+5. **Run the application**
+   ```bash
+   # Terminal 1 - Start backend
+   cd backend
+   npm run dev
+   
+   # Terminal 2 - Start frontend
+   cd frontend
+   npm run dev
+   ```
 
-#### Backend (.env)
-```env
-DATABASE_URL="postgresql://username:password@localhost:5432/notetakerlft?schema=public"
-JWT_SECRET="your-super-secret-jwt-key"
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GOOGLE_REDIRECT_URI="http://localhost:5174/auth/google/callback"
-PORT=5000
-```
+6. **Open your browser**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000
+   - API Docs: http://localhost:5000/api-docs
 
-### 5. Start Development Servers
-
-#### Terminal 1 - Backend
-```bash
-cd backend
-pnpm run dev
-```
-Backend will run on: http://localhost:5000
-
-#### Terminal 2 - Frontend
-```bash
-cd frontend
-pnpm run dev
-```
-Frontend will run on: http://localhost:5174
-
-## 🧪 Testing
-
-### Frontend Tests
-```bash
-cd frontend
-pnpm test              # Run tests
-pnpm test:watch        # Run tests in watch mode
-pnpm test:coverage     # Run tests with coverage
-```
-
-### Backend Tests
-```bash
-cd backend
-pnpm test              # Run tests (when implemented)
-```
-
-## 📚 API Documentation
-
-Once the backend is running, visit the interactive API documentation:
-
-**Swagger UI**: http://localhost:5000/api-docs
-
-The API documentation includes:
-- All authentication endpoints
-- Note CRUD operations
-- Request/response schemas
-- Interactive testing interface
-
-## 🗄️ Database Schema
-
-### Users Table
-```sql
-- id (UUID, Primary Key)
-- email (String, Unique)
-- password (String, Optional - for Google OAuth users)
-- name (String, Optional)
-- googleId (String, Unique, Optional)
-- avatar (String, Optional)
-- createdAt (DateTime)
-```
-
-### Notes Table
-```sql
-- id (UUID, Primary Key)
-- title (String)
-- content (String)
-- tags (String Array)
-- userId (UUID, Foreign Key)
-- createdAt (DateTime)
-- updatedAt (DateTime)
-```
-
-## 🔧 Available Scripts
+## 📚 Key Libraries & Technologies
 
 ### Frontend
-```bash
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm preview      # Preview production build
-pnpm test         # Run tests
-pnpm lint         # Run linter
-```
+- **React 18**: UI framework with hooks
+- **TypeScript**: Type-safe JavaScript
+- **Vite**: Build tool and dev server
+- **Tailwind CSS**: Utility-first CSS framework
+- **shadcn/ui**: Reusable component library
+- **React Router**: Client-side routing
+- **Lucide React**: Icon library
 
 ### Backend
-```bash
-pnpm dev          # Start development server
-pnpm build        # Build TypeScript
-pnpm start        # Start production server
-```
+- **Express.js**: Web framework
+- **Prisma**: Database ORM
+- **PostgreSQL**: Relational database
+- **JWT**: Authentication tokens
+- **bcrypt**: Password hashing
+- **Winston**: Logging library
+- **Swagger**: API documentation
 
-## 🌐 API Endpoints
+### Development Tools
+- **ESLint**: Code linting
+- **TypeScript**: Static type checking
+- **Prisma Studio**: Database GUI
+- **Render**: Deployment platform
 
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/google` - Google OAuth authentication
-- `GET /api/auth/google/url` - Get Google OAuth URL
+## 🔧 Development
 
-### Notes
-- `GET /api/notes` - Get all notes (with pagination/filtering)
-- `POST /api/notes` - Create new note
-- `GET /api/notes/:id` - Get specific note
-- `PUT /api/notes/:id` - Update note
-- `DELETE /api/notes/:id` - Delete note
-- `POST /api/notes/local` - Create local note (no auth)
-- `POST /api/notes/convert-local` - Convert local notes to permanent
-
-## 🔒 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt for password security
-- **Input Validation**: Zod schema validation
-- **CORS Protection**: Configured for frontend domain
-- **Rate Limiting**: Request size limits
-- **Error Handling**: Structured error responses
-
-## 📁 Project Structure
-
+### Project Structure
 ```
 NoteTakerLFT/
 ├── frontend/                 # React frontend
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
 │   │   ├── pages/          # Page components
+│   │   ├── lib/            # Utility functions
 │   │   ├── hooks/          # Custom React hooks
-│   │   ├── lib/            # API services
-│   │   ├── types/          # TypeScript types
-│   │   └── test/           # Test setup
-│   └── __tests__/          # Unit tests
-├── backend/                 # Node.js backend
+│   │   └── types/          # TypeScript type definitions
+│   └── public/             # Static assets
+├── backend/                 # Express backend
 │   ├── src/
-│   │   ├── controllers/    # Route handlers
-│   │   ├── middleware/     # Custom middleware
+│   │   ├── controllers/    # Request handlers
+│   │   ├── middleware/     # Express middleware
 │   │   ├── routes/         # API routes
-│   │   ├── config/         # Configuration files
-│   │   └── lib/            # Database and utilities
+│   │   ├── lib/            # Database and utilities
+│   │   └── config/         # Configuration files
 │   └── prisma/             # Database schema and migrations
-└── logs/                   # Application logs
+└── README.md
 ```
 
-## 🚀 Deployment
+### Available Scripts
 
-### Frontend (Vercel/Netlify)
+**Backend:**
 ```bash
-cd frontend
-pnpm build
-# Deploy dist/ folder
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run migrate      # Run database migrations
 ```
 
-### Backend (Railway/Heroku)
+**Frontend:**
 ```bash
-cd backend
-pnpm build
-# Deploy with environment variables
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
 ```
+
+## 📊 Logging
+
+The backend implements comprehensive logging using Winston:
+
+- **Request Logging**: All HTTP requests are logged with method, URL, status, and duration
+- **Error Logging**: Detailed error logs with stack traces
+- **Database Logging**: Connection status and query errors
+- **Authentication Logging**: Login attempts and failures
+
+**View logs:**
+- **Development**: Logs appear in the console
+- **Production**: Logs are written to `backend/logs/app.log`
+
+## 🌐 Deployment
+
+The application is deployed on Render:
+
+- **Frontend**: https://notetaker-frontend.onrender.com
+- **Backend**: https://notetaker-backend-jpgb.onrender.com
+- **Database**: PostgreSQL on Render
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new features
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For support, please check:
-1. API Documentation: http://localhost:5000/api-docs
-2. Application Logs: `backend/logs/app.log`
-3. Database Migrations: `backend/prisma/migrations/`
-
----
-
-**Note**: This application was built as a coding assignment for Leapfrog Technologies, demonstrating full-stack development skills with modern technologies and best practices.
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+- [Prisma](https://www.prisma.io/) for the excellent database ORM
+- [Render](https://render.com/) for the hosting platform

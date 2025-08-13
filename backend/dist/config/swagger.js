@@ -193,8 +193,8 @@ const options = {
                 description: 'User authentication and authorization endpoints'
             },
             {
-                name: 'Notes',
-                description: 'Note CRUD operations'
+                name: 'NoteTakerLFT',
+                description: 'Note taking application'
             }
         ]
     },

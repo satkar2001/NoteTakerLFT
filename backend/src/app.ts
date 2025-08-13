@@ -40,27 +40,7 @@ app.get('/', (req, res) => {
   res.send('Server is running!');
 });
 
-// Firebase authentication endpoint (optional - for backend verification)
-app.post('/api/auth/firebase', async (req: Request, res: Response) => {
-  try {
-    const { token } = req.body;
-    
-    if (!token) {
-      return res.status(400).json({ error: 'Firebase token is required' });
-    }
-    
-    // Verify Firebase token (you can add Firebase Admin SDK here if needed)
-    // For now, we'll just return success
-    res.json({ 
-      success: true, 
-      message: 'Firebase token received' 
-    });
-    
-  } catch (error) {
-    console.error('Firebase auth error:', error);
-    res.status(500).json({ error: 'Firebase authentication failed' });
-  }
-});
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
