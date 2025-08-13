@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getGoogleAuthUrl, googleAuth } from '@/lib/authService';
+import { getGoogleAuthUrl } from '@/lib/authService';
 
 interface AuthDialogProps {
   open: boolean;
