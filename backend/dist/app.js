@@ -2,57 +2,46 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
-
 dotenv.config();
-
 import authRoutes from './routes/authRoutes.js';
 import noteRoutes from './routes/noteRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
 import { specs } from './config/swagger.js';
-
 const app = express();
-
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://notetaker-frontend.onrender.com', 
-        'https://your-frontend-domain.com' 
-      ]
-    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
-  credentials: true,
-  optionsSuccessStatus: 200
+    origin: process.env.NODE_ENV === 'production'
+        ? [
+            'https://notetaker-frontend.onrender.com',
+            'https://your-frontend-domain.com'
+        ]
+        : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+    credentials: true,
+    optionsSuccessStatus: 200
 };
-
 // Middleware
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' })); 
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(requestLogger);
-
 // for swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'NoteTaker API Documentation'
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'NoteTaker API Documentation'
 }));
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
-
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+    res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+    });
 });
-
 // 404 
 app.use(notFound);
-
 app.use(errorHandler);
-
 export default app;
+//# sourceMappingURL=app.js.map

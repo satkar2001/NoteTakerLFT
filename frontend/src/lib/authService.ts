@@ -1,44 +1,54 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
-}
+const api = axios.create({
+  baseURL: `${API_BASE_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export interface AuthResponse {
   token: string;
   user: {
     id: string;
     email: string;
-    name: string;
+    name?: string;
+    googleId?: string;
+    avatar?: string;
+    createdAt: string;
   };
 }
 
-export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await axios.post(`${API_URL}/login`, data);
+export interface RegisterData {
+  email: string;
+  password: string;
+  name?: string;
+}
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export const register = async (data: RegisterData): Promise<AuthResponse> => {
+  const response = await api.post('/auth/register', data);
   return response.data;
 };
 
-export const register = async (data: RegisterData): Promise<AuthResponse> => {
-  const response = await axios.post(`${API_URL}/register`, data);
+export const login = async (data: LoginData): Promise<AuthResponse> => {
+  const response = await api.post('/auth/login', data);
   return response.data;
 };
 
 export const getGoogleAuthUrl = async (): Promise<{ url: string }> => {
-  const response = await axios.get(`${API_URL}/google/url`);
+  const response = await api.get('/auth/google/url');
   return response.data;
 };
 
 export const googleAuth = async (code: string): Promise<AuthResponse> => {
-  const response = await axios.post(`${API_URL}/google`, { code });
+  const response = await api.post('/auth/google', { code });
   return response.data;
 };
 

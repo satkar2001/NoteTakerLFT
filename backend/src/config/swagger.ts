@@ -6,7 +6,7 @@ const options = {
     info: {
       title: 'NoteTaker API',
       version: '1.0.0',
-      description: 'A RESTful API for a note-taking application with authentication and CRUD operations',
+      description: 'Notes App for LFT by Satkar',
       contact: {
         name: 'API Support',
         email: 'support@notetaker.com'

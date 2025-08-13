@@ -1,56 +1,112 @@
-import axios from "axios";
-import type { Note, LocalNote } from "../types";
+import axios from 'axios';
 
-const API_URL = "http://localhost:5000/api/notes";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Create axios instance with base configuration
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
-export const getNotes = async (): Promise<Note[]> => {
-  const res = await api.get('/');
-  return res.data;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface CreateNoteData {
+  title: string;
+  content: string;
+  tags?: string[];
+}
+
+export interface UpdateNoteData {
+  title: string;
+  content: string;
+  tags?: string[];
+}
+
+export interface PaginationResponse {
+  notes: Note[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export const getNotes = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  tags?: string;
+  favorites?: boolean;
+  sortBy?: string;
+  sortOrder?: string;
+}): Promise<PaginationResponse> => {
+  const response = await api.get('/notes', { params });
+  return response.data;
 };
 
 export const getNoteById = async (id: string): Promise<Note> => {
-  const res = await api.get(`/${id}`);
-  return res.data;
+  const response = await api.get(`/notes/${id}`);
+  return response.data;
 };
 
-export const createNote = async (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt' | 'userId'>): Promise<Note> => {
-  const res = await api.post('/', note);
-  return res.data;
+export const createNote = async (data: CreateNoteData): Promise<Note> => {
+  const response = await api.post('/notes', data);
+  return response.data;
 };
 
-export const createLocalNote = async (note: Omit<LocalNote, 'id' | 'createdAt' | 'isLocal'>): Promise<{ id: string; title: string; content: string; tags: string[]; isLocal: boolean; message: string }> => {
-  const res = await api.post('/local', { ...note, isLocal: true });
-  return res.data;
-};
-
-export const updateNote = async (id: string, note: Partial<Note>): Promise<{ message: string }> => {
-  const res = await api.put(`/${id}`, note);
-  return res.data;
+export const updateNote = async (id: string, data: UpdateNoteData): Promise<Note> => {
+  const response = await api.put(`/notes/${id}`, data);
+  return response.data;
 };
 
 export const deleteNote = async (id: string): Promise<{ message: string }> => {
-  const res = await api.delete(`/${id}`);
-  return res.data;
+  const response = await api.delete(`/notes/${id}`);
+  return response.data;
 };
 
-export const convertLocalNotes = async (localNotes: LocalNote[]): Promise<{ message: string; notes: Note[] }> => {
-  const res = await api.post('/convert-local', { localNotes });
-  return res.data;
+export const createLocalNote = async (data: CreateNoteData & { isLocal: boolean }) => {
+  const response = await api.post('/notes/local', data);
+  return response.data;
+};
+
+export const convertLocalNotes = async (notes: CreateNoteData[]): Promise<{ message: string; notes: Note[] }> => {
+  const response = await api.post('/notes/convert-local', { notes });
+  return response.data;
 };
