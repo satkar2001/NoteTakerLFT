@@ -17,9 +17,8 @@ const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [
         'https://notetaker-frontend.onrender.com', 
-        'https://your-frontend-domain.com' 
       ]
-    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://localhost:5000'],
   credentials: true,
   optionsSuccessStatus: 200
 };

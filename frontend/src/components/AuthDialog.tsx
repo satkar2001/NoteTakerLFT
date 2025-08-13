@@ -87,41 +87,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
       // Get Google auth URL
       const { url } = await getGoogleAuthUrl();
       
-      // Open Google auth popup
-      const popup = window.open(
-        url,
-        'google-auth',
-        'width=500,height=600,scrollbars=yes,resizable=yes'
-      );
-      
-      if (!popup) {
-        alert('Popup blocked! Please allow popups for this site.');
-        return;
-      }
-      
-      // Listen for auth completion
-      const checkClosed = setInterval(() => {
-        if (popup?.closed) {
-          clearInterval(checkClosed);
-          // Handle popup closed without auth
-        }
-      }, 1000);
-      
-      // Listen for message from popup
-      const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        
-        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-          clearInterval(checkClosed);
-          window.removeEventListener('message', handleMessage);
-          popup?.close();
-          
-          // Handle successful Google auth
-          // You can implement this based on your needs
-        }
-      };
-      
-      window.addEventListener('message', handleMessage);
+      // Redirect to Google OAuth (this will handle the callback properly)
+      window.location.href = url;
     } catch (error) {
       console.error('Google auth error:', error);
     }
