@@ -40,106 +40,25 @@ app.get('/', (req, res) => {
   res.send('Server is running!');
 });
 
-// Google OAuth callback route - must be before /api routes
-app.get('/auth/google/callback', async (req: Request, res: Response) => {
-  const { code, scope } = req.query;
-  
-  if (!code) {
-    return res.status(400).json({ 
-      success: false, 
-      error: 'Authorization code is required' 
-    });
-  }
-  
+// Firebase authentication endpoint (optional - for backend verification)
+app.post('/api/auth/firebase', async (req: Request, res: Response) => {
   try {
-    // Process the authorization code with Google
-    const { OAuth2Client } = await import('google-auth-library');
-    const client = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
-    );
+    const { token } = req.body;
     
-    // Exchange code for tokens
-    const { tokens } = await client.getToken(code as string);
-    client.setCredentials(tokens);
-    
-    // Get user info
-    const googleClientId = process.env.GOOGLE_CLIENT_ID;
-    if (!googleClientId) {
-      return res.status(500).json({ error: 'Google client ID not configured' });
+    if (!token) {
+      return res.status(400).json({ error: 'Firebase token is required' });
     }
     
-    const ticket = await client.verifyIdToken({
-      idToken: tokens.id_token!,
-      audience: googleClientId
+    // Verify Firebase token (you can add Firebase Admin SDK here if needed)
+    // For now, we'll just return success
+    res.json({ 
+      success: true, 
+      message: 'Firebase token received' 
     });
-    
-    const payload = ticket.getPayload();
-    if (!payload) {
-      return res.status(500).json({ error: 'Failed to get user payload' });
-    }
-    
-    const { email, name, picture, sub: googleId } = payload;
-    
-    if (!email) {
-      return res.status(500).json({ error: 'Email not provided by Google' });
-    }
-    
-    // Find or create user
-    let user = await prisma.user.findUnique({
-      where: { email }
-    });
-    
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email,
-          name: name || null,
-          googleId,
-          avatar: picture || null
-        }
-      });
-    } else if (!user.googleId) {
-      // Link existing account
-      user = await prisma.user.update({
-        where: { email },
-        data: { 
-          googleId, 
-          avatar: picture || null 
-        }
-      });
-    }
-    
-    // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      return res.status(500).json({ error: 'JWT secret not configured' });
-    }
-    
-    const jwt = await import('jsonwebtoken');
-    const token = jwt.sign(
-      { userId: user.id },
-      jwtSecret,
-      { expiresIn: '1d' }
-    );
-    
-    // Redirect to frontend with success
-    const frontendUrl = process.env.NODE_ENV === 'production'
-      ? 'https://notetaker-frontend.onrender.com'
-      : 'http://localhost:5173';
-      
-    res.redirect(`${frontendUrl}/auth/google/callback?success=true&token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify({ id: user.id, email: user.email, name: user.name }))}`);
     
   } catch (error) {
-    console.error('Google OAuth callback error:', error);
-    
-    // Redirect to frontend with error
-    const frontendUrl = process.env.NODE_ENV === 'production'
-      ? 'https://notetaker-frontend.onrender.com'
-      : 'http://localhost:5173';
-      
-    res.redirect(`${frontendUrl}/auth/google/callback?error=${encodeURIComponent('Google authentication failed')}`);
+    console.error('Firebase auth error:', error);
+    res.status(500).json({ error: 'Firebase authentication failed' });
   }
 });
 

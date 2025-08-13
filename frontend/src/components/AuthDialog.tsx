@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getGoogleAuthUrl } from '@/lib/authService';
+import { signInWithGoogle } from '@/lib/firebase';
 
 interface AuthDialogProps {
   open: boolean;
@@ -84,64 +84,23 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
 
   const handleGoogleAuth = async () => {
     try {
-      // Get Google auth URL
-      const { url } = await getGoogleAuthUrl();
+      // Use Firebase Google authentication
+      const response = await signInWithGoogle();
       
-      // Open Google auth popup
-      const popup = window.open(
-        url,
-        'google-auth',
-        'width=500,height=600,scrollbars=yes,resizable=yes'
-      );
+      // Store the token and user data
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify({
+        name: response.user.name || '',
+        email: response.user.email
+      }));
       
-      if (!popup) {
-        alert('Popup blocked! Please allow popups for this site.');
-        return;
-      }
+      // Close the auth dialog and refresh the page to update the UI
+      onOpenChange(false);
+      window.location.reload();
       
-      // Listen for auth completion
-      const checkClosed = setInterval(() => {
-        if (popup?.closed) {
-          clearInterval(checkClosed);
-          // Handle popup closed without auth
-        }
-      }, 1000);
-      
-      // Listen for message from popup
-      const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        
-        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-          clearInterval(checkClosed);
-          window.removeEventListener('message', handleMessage);
-          popup?.close();
-          
-          // Handle successful Google auth - token and user data are already processed
-          try {
-            // Store the token and user data (already processed by the callback page)
-            if (event.data.token && event.data.user) {
-              localStorage.setItem('token', event.data.token);
-              localStorage.setItem('user', JSON.stringify({
-                name: event.data.user.name || '',
-                email: event.data.user.email
-              }));
-              
-              // Close the auth dialog and refresh the page to update the UI
-              onOpenChange(false);
-              window.location.reload();
-            } else {
-              throw new Error('Missing token or user data');
-            }
-          } catch (error: any) {
-            console.error('Google authentication failed:', error);
-            alert('Google authentication failed: ' + (error.message || 'Unknown error'));
-          }
-        }
-      };
-      
-      window.addEventListener('message', handleMessage);
-    } catch (error) {
-      console.error('Google auth error:', error);
+    } catch (error: any) {
+      console.error('Google authentication failed:', error);
+      alert('Google authentication failed: ' + (error.message || 'Unknown error'));
     }
   };
 

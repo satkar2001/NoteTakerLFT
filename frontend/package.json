@@ -19,6 +19,7 @@
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^10.14.1",
     "lucide-react": "^0.539.0",
     "ngrok": "5.0.0-beta.2",
     "react": "^19.1.1",

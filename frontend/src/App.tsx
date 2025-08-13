@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Home from './pages/Home';
 import NotePage from './components/NotePage';
-import GoogleAuthCallback from './pages/GoogleAuthCallback';
+
 
 // Create a client
 const queryClient = new QueryClient({
@@ -26,7 +26,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/note/new" element={<NotePage isNewNote={true} />} />
           <Route path="/note/:id" element={<NotePage />} />
-          <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
+
         </Routes>
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />

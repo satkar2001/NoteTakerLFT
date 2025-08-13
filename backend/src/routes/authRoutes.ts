@@ -1,6 +1,5 @@
 import express, { type Router, type Request, type Response } from 'express';
 import { register, login } from '../controllers/authController.js';
-import { googleAuth, getGoogleAuthUrl } from '../controllers/googleAuthController.js';
 import { validateUser, validateLogin } from '../middleware/validationMiddleware.js';
 
 const router: Router = express.Router();
@@ -123,26 +122,6 @@ router.post('/login', validateLogin, login);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/google', googleAuth);
-
-/**
- * @swagger
- * /api/auth/google/url:
- *   get:
- *     summary: Get Google OAuth URL
- *     tags: [Authentication]
- *     responses:
- *       200:
- *         description: Google OAuth URL
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 url:
- *                   type: string
- *                   description: Google OAuth authorization URL
- */
-router.get('/google/url', getGoogleAuthUrl);
+// Google OAuth routes removed - using Firebase instead
 
 export default router;
