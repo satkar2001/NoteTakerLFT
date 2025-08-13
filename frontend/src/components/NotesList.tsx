@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import NoteCard from './NoteCard';
 import type { Note, LocalNote, ViewMode } from '@/types';
 

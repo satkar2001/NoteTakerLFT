@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Star, Heart } from 'lucide-react';
+import { Trash2, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Note, LocalNote } from '@/types';

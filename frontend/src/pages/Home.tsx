@@ -77,7 +77,7 @@ const Home: React.FC = () => {
     try {
       setIsLoading(true);
       const fetchedNotes = await getNotes();
-      setNotes(fetchedNotes);
+      setNotes(fetchedNotes.notes);
     } catch (error: unknown) {
       console.error('Failed to fetch notes:', error);
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
@@ -151,10 +151,16 @@ const Home: React.FC = () => {
       
       setToken(response.token);
       setIsLoggedIn(true);
-      setUser(response.user);
+      setUser({
+        name: response.user.name || '',
+        email: response.user.email
+      });
       
       // Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('user', JSON.stringify({
+        name: response.user.name || '',
+        email: response.user.email
+      }));
       
       setShowAuthDialog(false);
       
