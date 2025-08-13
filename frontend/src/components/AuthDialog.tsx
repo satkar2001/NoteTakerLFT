@@ -94,7 +94,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
         email: response.user.email
       }));
       
-      // Close the auth dialog - no need to refresh, Firebase auth state will handle it
+      // Close the auth dialog - Firebase auth state will handle the UI update
       onOpenChange(false);
       
     } catch (error: any) {

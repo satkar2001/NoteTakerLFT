@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
@@ -27,6 +27,9 @@ const Home: React.FC = () => {
   const [isAuthMode, setIsAuthMode] = useState<'login' | 'register'>('login');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Ref to track if Firebase listener is already set up
+  const firebaseListenerSet = useRef(false);
 
   // Filter options
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
@@ -45,59 +48,72 @@ const Home: React.FC = () => {
   const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    // Listen to Firebase auth state changes
-    const unsubscribe = onAuthStateChanged((firebaseUser) => {
-      console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
+    // Check initial authentication state first
+    const checkInitialAuth = () => {
+      const authenticated = isAuthenticated();
+      const userData = localStorage.getItem('user');
       
-      if (firebaseUser) {
-        // User is signed in with Firebase
-        console.log('Firebase user:', firebaseUser.displayName, firebaseUser.email);
-        setIsLoggedIn(true);
-        setUser({
-          name: firebaseUser.displayName || '',
-          email: firebaseUser.email || ''
-        });
-        
-        // Store user data in localStorage
-        localStorage.setItem('user', JSON.stringify({
-          name: firebaseUser.displayName || '',
-          email: firebaseUser.email || ''
-        }));
-        
-        // Store Firebase token
-        firebaseUser.getIdToken().then(token => {
-          localStorage.setItem('token', token);
-          console.log('Firebase token stored');
-        });
-        
-        fetchNotes();
-      } else {
-        // User is signed out
-        const authenticated = isAuthenticated();
-        if (authenticated) {
-          // Check if user is authenticated via regular auth
-          const userData = localStorage.getItem('user');
-          if (userData) {
-            try {
-              setUser(JSON.parse(userData));
-              setIsLoggedIn(true);
-              fetchNotes();
-              return;
-            } catch (error) {
-              console.error('Failed to parse user data:', error);
-            }
-          }
+      if (authenticated && userData) {
+        try {
+          const user = JSON.parse(userData);
+          setIsLoggedIn(true);
+          setUser(user);
+          fetchNotes();
+          return true; // User is authenticated
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
         }
-        
-        // No authentication found
-        setIsLoggedIn(false);
-        setUser(null);
-        loadLocalNotes();
       }
-    });
+      
+      // No authentication found
+      setIsLoggedIn(false);
+      setUser(null);
+      loadLocalNotes();
+      return false; // User is not authenticated
+    };
     
-    // Cleanup subscription
-    return () => unsubscribe();
+    // Check initial state first
+    const isInitiallyAuthenticated = checkInitialAuth();
+    
+    // Set up Firebase listener only once and only if user is not already authenticated
+    if (!isInitiallyAuthenticated && !firebaseListenerSet.current) {
+      firebaseListenerSet.current = true;
+      
+      const unsubscribe = onAuthStateChanged((firebaseUser) => {
+        console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
+        
+        if (firebaseUser) {
+          // User is signed in with Firebase
+          console.log('Firebase user:', firebaseUser.displayName, firebaseUser.email);
+          setIsLoggedIn(true);
+          setUser({
+            name: firebaseUser.displayName || '',
+            email: firebaseUser.email || ''
+          });
+          
+          // Store user data in localStorage
+          localStorage.setItem('user', JSON.stringify({
+            name: firebaseUser.displayName || '',
+            email: firebaseUser.email || ''
+          }));
+          
+          // Store Firebase token
+          firebaseUser.getIdToken().then(token => {
+            localStorage.setItem('token', token);
+            console.log('Firebase token stored');
+          });
+          
+          fetchNotes();
+        }
+        // Don't handle sign out here to avoid conflicts
+      });
+      
+      // Cleanup subscription
+      return () => {
+        firebaseListenerSet.current = false;
+        unsubscribe();
+      };
+    }
   }, []);
 
   const loadLocalNotes = () => {
