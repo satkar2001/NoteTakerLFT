@@ -12,18 +12,12 @@ const options = {
             title: 'NoteTaker API',
             version: '1.0.0',
             description: 'Notes App for LFT by Satkar',
-            contact: {
-                name: 'API Support',
-                email: 'support@notetaker.com'
-            },
-            license: {
-                name: 'MIT',
-                url: 'https://opensource.org/licenses/MIT'
-            }
+         
+            
         },
         servers: [
             {
-                url: 'http://localhost:5000',
+                url: 'https://notetaker-backend-jpgb.onrender.com',
                 description: 'Development server'
             }
         ],
