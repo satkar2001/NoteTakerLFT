@@ -38,6 +38,26 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
+
+// Google OAuth callback route - must be before /api routes
+app.get('/auth/google/callback', (req: Request, res: Response) => {
+  const { code, scope } = req.query;
+  
+  if (!code) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Authorization code is required' 
+    });
+  }
+  
+  // Redirect to frontend with the authorization code
+  const frontendUrl = process.env.NODE_ENV === 'production'
+    ? 'https://notetaker-frontend.onrender.com'
+    : 'http://localhost:5173';
+    
+  res.redirect(`${frontendUrl}/auth/google/callback?code=${code}&scope=${scope}`);
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 

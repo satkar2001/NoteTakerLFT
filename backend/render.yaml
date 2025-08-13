@@ -27,5 +27,5 @@ services:
       - key: GOOGLE_CLIENT_SECRET
         sync: false
       - key: GOOGLE_REDIRECT_URI
-        value: https://notetaker-frontend.onrender.com/auth/google/callback
+        value: http://localhost:5000/auth/google/callback
     healthCheckPath: /health
