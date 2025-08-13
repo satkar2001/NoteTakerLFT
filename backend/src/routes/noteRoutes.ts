@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Router } from 'express';
 import {
   createNote,
   getNotes,
@@ -10,7 +10,7 @@ import {
 import { authenticate } from '../middleware/authMiddleware.js';
 import { validateNote } from '../middleware/validationMiddleware.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 /**
  * @swagger

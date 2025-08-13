@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Application, type Request, type Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
@@ -11,7 +11,7 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
 import { specs } from './config/swagger.js';
 
-const app = express();
+const app: Application = express();
 
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
@@ -42,7 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
