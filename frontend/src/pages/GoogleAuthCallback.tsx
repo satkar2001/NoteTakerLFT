@@ -6,7 +6,7 @@ const GoogleAuthCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(true);
+  const [, setIsProcessing] = useState(true);
   
   useEffect(() => {
     const code = searchParams.get('code');
