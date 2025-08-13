@@ -14,6 +14,7 @@ import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
 import { useNoteFilters } from '@/hooks/useNoteFilters';
+import { onAuthStateChanged, getCurrentUser, signOut } from '@/lib/firebase';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -44,28 +45,59 @@ const Home: React.FC = () => {
   const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = isAuthenticated();
-      setIsLoggedIn(authenticated);
+    // Listen to Firebase auth state changes
+    const unsubscribe = onAuthStateChanged((firebaseUser) => {
+      console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
       
-      // Get user data from localStorage if authenticated
-      if (authenticated) {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            setUser(JSON.parse(userData));
-          } catch (error) {
-            console.error('Failed to parse user data:', error);
-          }
-        }
+      if (firebaseUser) {
+        // User is signed in with Firebase
+        console.log('Firebase user:', firebaseUser.displayName, firebaseUser.email);
+        setIsLoggedIn(true);
+        setUser({
+          name: firebaseUser.displayName || '',
+          email: firebaseUser.email || ''
+        });
+        
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify({
+          name: firebaseUser.displayName || '',
+          email: firebaseUser.email || ''
+        }));
+        
+        // Store Firebase token
+        firebaseUser.getIdToken().then(token => {
+          localStorage.setItem('token', token);
+          console.log('Firebase token stored');
+        });
+        
         fetchNotes();
       } else {
+        // User is signed out
+        const authenticated = isAuthenticated();
+        if (authenticated) {
+          // Check if user is authenticated via regular auth
+          const userData = localStorage.getItem('user');
+          if (userData) {
+            try {
+              setUser(JSON.parse(userData));
+              setIsLoggedIn(true);
+              fetchNotes();
+              return;
+            } catch (error) {
+              console.error('Failed to parse user data:', error);
+            }
+          }
+        }
+        
+        // No authentication found
+        setIsLoggedIn(false);
         setUser(null);
         loadLocalNotes();
       }
-    };
+    });
     
-    checkAuth();
+    // Cleanup subscription
+    return () => unsubscribe();
   }, []);
 
   const loadLocalNotes = () => {
@@ -188,11 +220,20 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Sign out from Firebase
+      await signOut();
+    } catch (error) {
+      console.error('Firebase sign out error:', error);
+    }
+    
+    // Also clear regular auth
     logout();
     setIsLoggedIn(false);
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setNotes([]);
     loadLocalNotes();
   };

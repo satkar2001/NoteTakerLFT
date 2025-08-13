@@ -94,9 +94,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
         email: response.user.email
       }));
       
-      // Close the auth dialog and refresh the page to update the UI
+      // Close the auth dialog - no need to refresh, Firebase auth state will handle it
       onOpenChange(false);
-      window.location.reload();
       
     } catch (error: any) {
       console.error('Google authentication failed:', error);
