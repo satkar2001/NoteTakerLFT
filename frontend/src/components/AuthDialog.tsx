@@ -18,6 +18,7 @@ interface AuthDialogProps {
   onSubmit: (data: { email: string; password: string; name?: string }) => Promise<void>;
   isLoading: boolean;
   error: string;
+  onGoogleAuthSuccess?: (user: { name: string; email: string }, token: string) => Promise<void>;
 }
 
 interface ValidationErrors {
@@ -34,6 +35,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   onSubmit,
   isLoading,
   error,
+  onGoogleAuthSuccess,
 }) => {
   const [formData, setFormData] = useState({
     email: '',
@@ -89,18 +91,22 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
       // Use Firebase Google authentication
       const response = await signInWithGoogle();
       
-      // Store the token and user data
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify({
+      const userData = {
         name: response.user.name || '',
         email: response.user.email
-      }));
+      };
       
-      // Close the auth dialog and let the Firebase listener handle the state update
+      // Close the dialog first
       onOpenChange(false);
       
-      // Force page reload to ensure clean state
-      window.location.reload();
+      // Call the success callback if provided
+      if (onGoogleAuthSuccess) {
+        await onGoogleAuthSuccess(userData, response.token);
+      } else {
+        // Fallback: store directly (shouldn't be needed with callback)
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
       
     } catch (error: any) {
       console.error('Google authentication failed:', error);

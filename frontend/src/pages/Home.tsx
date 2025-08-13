@@ -101,13 +101,12 @@ const Home: React.FC = () => {
       firebaseListenerSet.current = true;
       
       return onAuthStateChanged((firebaseUser) => {
-        // Only process Firebase auth if we're not already authenticated
-        if (!authInitialized.current || isLoggedIn) return;
+        console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
         
         if (firebaseUser) {
-          console.log('Firebase user authenticated');
+          console.log('Firebase user authenticated:', firebaseUser.displayName, firebaseUser.email);
           
-          // Update auth state
+          // Always update auth state when Firebase user is present
           setIsLoggedIn(true);
           setUser({
             name: firebaseUser.displayName || '',
@@ -123,9 +122,16 @@ const Home: React.FC = () => {
           // Get and store token
           firebaseUser.getIdToken().then(token => {
             localStorage.setItem('token', token);
+            console.log('Firebase token stored, fetching notes...');
             fetchNotes();
           });
           
+          setIsAuthLoading(false);
+        } else if (!isAuthenticated()) {
+          // Only sign out if we don't have valid localStorage auth
+          console.log('Firebase user signed out, no localStorage auth');
+          setIsLoggedIn(false);
+          setUser(null);
           setIsAuthLoading(false);
         }
       });
@@ -368,6 +374,27 @@ const Home: React.FC = () => {
         onSubmit={handleAuthSubmit}
         isLoading={isAuthSubmitLoading}
         error={authError}
+        onGoogleAuthSuccess={async (user, token) => {
+          // Handle Google auth success
+          setIsLoggedIn(true);
+          setUser(user);
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          // Convert local notes if any
+          const localNotes = getLocalNotes();
+          if (localNotes.length > 0) {
+            try {
+              await convertLocalNotes(localNotes);
+              clearLocalNotes();
+            } catch (error) {
+              console.error('Failed to convert local notes:', error);
+            }
+          }
+          
+          // Fetch notes
+          fetchNotes();
+        }}
       />
     </div>
   );
