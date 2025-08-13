@@ -15,8 +15,7 @@
     "declaration": true,
     "declarationMap": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "types": ["node", "express", "cors", "bcrypt", "jsonwebtoken", "swagger-ui-express", "swagger-jsdoc"]
+    "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
