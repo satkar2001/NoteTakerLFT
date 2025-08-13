@@ -21,6 +21,8 @@ const Home: React.FC = () => {
   const [notes, setNotes] = useState<(Note | LocalNote)[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Add auth loading state to prevent flickering
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -28,7 +30,8 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
-  // Ref to track if Firebase listener is already set up
+  // Track if auth has been initialized
+  const authInitialized = useRef(false);
   const firebaseListenerSet = useRef(false);
 
   // Filter options
@@ -44,77 +47,104 @@ const Home: React.FC = () => {
   });
   
   // Auth form state
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isAuthSubmitLoading, setIsAuthSubmitLoading] = useState(false);
   const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    // Check initial authentication state first
-    const checkInitialAuth = () => {
-      const authenticated = isAuthenticated();
-      const userData = localStorage.getItem('user');
+    // Single initialization function
+    const initializeAuth = async () => {
+      if (authInitialized.current) return;
+      authInitialized.current = true;
       
-      if (authenticated && userData) {
-        try {
-          const user = JSON.parse(userData);
-          setIsLoggedIn(true);
-          setUser(user);
-          fetchNotes();
-          return true; // User is authenticated
-        } catch (error) {
-          console.error('Failed to parse user data:', error);
+      setIsAuthLoading(true);
+      
+      try {
+        // Check localStorage first (fastest)
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+        
+        if (token && userStr) {
+          // Validate the stored auth
+          const isValid = isAuthenticated();
+          if (isValid) {
+            const userData = JSON.parse(userStr);
+            setIsLoggedIn(true);
+            setUser(userData);
+            await fetchNotes();
+            setIsAuthLoading(false);
+            return; // Exit early, user is authenticated
+          } else {
+            // Clear invalid tokens
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
         }
+        
+        // No valid localStorage auth, load local notes
+        loadLocalNotes();
+        setIsLoggedIn(false);
+        setUser(null);
+        
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setIsLoggedIn(false);
+        setUser(null);
+        loadLocalNotes();
+      } finally {
+        setIsAuthLoading(false);
       }
-      
-      // No authentication found
-      setIsLoggedIn(false);
-      setUser(null);
-      loadLocalNotes();
-      return false; // User is not authenticated
     };
-    
-    // Check initial state first
-    const isInitiallyAuthenticated = checkInitialAuth();
-    
-    // Set up Firebase listener only once and only if user is not already authenticated
-    if (!isInitiallyAuthenticated && !firebaseListenerSet.current) {
+
+    // Set up Firebase listener only once
+    const setupFirebaseListener = () => {
+      if (firebaseListenerSet.current) return null;
       firebaseListenerSet.current = true;
       
-      const unsubscribe = onAuthStateChanged((firebaseUser) => {
-        console.log('Firebase auth state changed:', firebaseUser ? 'User signed in' : 'User signed out');
+      return onAuthStateChanged((firebaseUser) => {
+        // Only process Firebase auth if we're not already authenticated
+        if (!authInitialized.current || isLoggedIn) return;
         
         if (firebaseUser) {
-          // User is signed in with Firebase
-          console.log('Firebase user:', firebaseUser.displayName, firebaseUser.email);
+          console.log('Firebase user authenticated');
+          
+          // Update auth state
           setIsLoggedIn(true);
           setUser({
             name: firebaseUser.displayName || '',
             email: firebaseUser.email || ''
           });
           
-          // Store user data in localStorage
+          // Store user data
           localStorage.setItem('user', JSON.stringify({
             name: firebaseUser.displayName || '',
             email: firebaseUser.email || ''
           }));
           
-          // Store Firebase token
+          // Get and store token
           firebaseUser.getIdToken().then(token => {
             localStorage.setItem('token', token);
-            console.log('Firebase token stored');
+            fetchNotes();
           });
           
-          fetchNotes();
+          setIsAuthLoading(false);
         }
-        // Don't handle sign out here to avoid conflicts
       });
-      
-      // Cleanup subscription
-      return () => {
+    };
+
+    // Initialize auth first
+    initializeAuth();
+    
+    // Set up Firebase listener
+    const unsubscribe = setupFirebaseListener();
+    
+    // Cleanup
+    return () => {
+      if (unsubscribe) {
         firebaseListenerSet.current = false;
         unsubscribe();
-      };
-    }
-  }, []);
+      }
+    };
+  }, []); // Empty dependency array - only run once
 
   const loadLocalNotes = () => {
     const localNotes = getLocalNotes();
@@ -130,10 +160,7 @@ const Home: React.FC = () => {
       console.error('Failed to fetch notes:', error);
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
         // Token expired or invalid
-        logout();
-        setIsLoggedIn(false);
-        setUser(null);
-        loadLocalNotes();
+        handleLogout();
       }
     } finally {
       setIsLoading(false);
@@ -146,24 +173,18 @@ const Home: React.FC = () => {
         await deleteNote(noteId);
         setNotes(prev => prev.filter(note => note.id !== noteId));
       } else {
-        // Delete from local storage
         deleteLocalNote(noteId);
-    setNotes(prev => prev.filter(note => note.id !== noteId));
+        setNotes(prev => prev.filter(note => note.id !== noteId));
       }
     } catch (error: unknown) {
       console.error('Failed to delete note:', error);
       if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 401) {
-        logout();
-        setIsLoggedIn(false);
-        setUser(null);
-        loadLocalNotes();
+        handleLogout();
       }
     }
   };
 
   const handleToggleFavorite = (noteId: string) => {
-    // For now, we'll add/remove a "favorite" tag
-    // You can extend this to store favorites in localStorage or backend
     setNotes(prev => prev.map(note => {
       if (note.id === noteId) {
         const hasFavorite = note.tags.some(tag => tag.toLowerCase() === 'favorite');
@@ -186,7 +207,7 @@ const Home: React.FC = () => {
   };
 
   const handleAuthSubmit = async (data: { email: string; password: string; name?: string }) => {
-    setIsAuthLoading(true);
+    setIsAuthSubmitLoading(true);
     setAuthError('');
     
     try {
@@ -232,19 +253,18 @@ const Home: React.FC = () => {
         setAuthError('Authentication failed');
       }
     } finally {
-      setIsAuthLoading(false);
+      setIsAuthSubmitLoading(false);
     }
   };
 
   const handleLogout = async () => {
     try {
-      // Sign out from Firebase
       await signOut();
     } catch (error) {
       console.error('Firebase sign out error:', error);
     }
     
-    // Also clear regular auth
+    // Clear all auth state
     logout();
     setIsLoggedIn(false);
     setUser(null);
@@ -252,6 +272,9 @@ const Home: React.FC = () => {
     localStorage.removeItem('token');
     setNotes([]);
     loadLocalNotes();
+    
+    // Reset auth initialization flag
+    authInitialized.current = false;
   };
 
   const handleSignInClick = () => {
@@ -261,6 +284,18 @@ const Home: React.FC = () => {
 
   // Use the custom hook for filtering and searching
   const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions, sortOptions);
+
+  // Show loading spinner during auth initialization
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+          <span className="text-lg">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white text-black font-inter">
@@ -283,8 +318,8 @@ const Home: React.FC = () => {
         <main className="flex-1 p-8">
           {/* Stats Bar */}
           <div className="flex items-center justify-between mb-8">
-  <div>
-    <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
+            <div>
+              <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <span>
                   {isLoading ? 'Loading...' : `${stats.filteredCount} of ${stats.totalNotes} notes`}
@@ -296,7 +331,7 @@ const Home: React.FC = () => {
                   <span className="text-blue-600">(filtered)</span>
                 )}
               </div>
-  </div>
+            </div>
 
             <div className="flex items-center gap-3">
               <FilterMenu 
@@ -309,8 +344,8 @@ const Home: React.FC = () => {
                 onSortChange={setSortOptions}
               />
               <Tip isLoggedIn={isLoggedIn} onSignInClick={handleSignInClick} />
-  </div>
-</div>
+            </div>
+          </div>
 
           <NotesList
             notes={filteredNotes}
@@ -331,7 +366,7 @@ const Home: React.FC = () => {
         isAuthMode={isAuthMode}
         setIsAuthMode={setIsAuthMode}
         onSubmit={handleAuthSubmit}
-        isLoading={isAuthLoading}
+        isLoading={isAuthSubmitLoading}
         error={authError}
       />
     </div>
