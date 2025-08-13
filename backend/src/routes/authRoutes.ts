@@ -1,4 +1,4 @@
-import express, { type Router } from 'express';
+import express, { type Router, type Request, type Response } from 'express';
 import { register, login } from '../controllers/authController.js';
 import { googleAuth, getGoogleAuthUrl } from '../controllers/googleAuthController.js';
 import { validateUser, validateLogin } from '../middleware/validationMiddleware.js';
@@ -144,5 +144,58 @@ router.post('/google', googleAuth);
  *                   description: Google OAuth authorization URL
  */
 router.get('/google/url', getGoogleAuthUrl);
+
+/**
+ * @swagger
+ * /api/auth/google/callback:
+ *   get:
+ *     summary: Handle Google OAuth callback
+ *     tags: [Authentication]
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         schema:
+ *           type: string
+ *         description: Authorization code from Google OAuth
+ *       - in: query
+ *         name: scope
+ *         schema:
+ *           type: string
+ *         description: OAuth scope
+ *     responses:
+ *       200:
+ *         description: OAuth callback handled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "OAuth callback received"
+ *                 code:
+ *                   type: string
+ *                   description: "Authorization code received"
+ *       400:
+ *         description: Missing authorization code
+ */
+router.get('/google/callback', (req: Request, res: Response) => {
+  const { code, scope } = req.query;
+  
+  if (!code) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Authorization code is required' 
+    });
+  }
+  
+  // For now, just acknowledge the callback
+  // In a real implementation, you might want to redirect to frontend with the code
+  res.json({ 
+    success: true,
+    message: 'OAuth callback received',
+    code: code as string
+  });
+});
 
 export default router;

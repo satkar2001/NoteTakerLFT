@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getGoogleAuthUrl } from '@/lib/authService';
+import { getGoogleAuthUrl, googleAuth } from '@/lib/authService';
 
 interface AuthDialogProps {
   open: boolean;
@@ -87,8 +87,57 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
       // Get Google auth URL
       const { url } = await getGoogleAuthUrl();
       
-      // Redirect to Google OAuth (this will handle the callback properly)
-      window.location.href = url;
+      // Open Google auth popup
+      const popup = window.open(
+        url,
+        'google-auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+      
+      if (!popup) {
+        alert('Popup blocked! Please allow popups for this site.');
+        return;
+      }
+      
+      // Listen for auth completion
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          // Handle popup closed without auth
+        }
+      }, 1000);
+      
+      // Listen for message from popup
+      const handleMessage = async (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+          clearInterval(checkClosed);
+          window.removeEventListener('message', handleMessage);
+          popup?.close();
+          
+          // Handle successful Google auth by calling the backend
+          try {
+            const response = await googleAuth(event.data.code);
+            
+            // Store the token and user data
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('user', JSON.stringify({
+              name: response.user.name || '',
+              email: response.user.email
+            }));
+            
+            // Close the auth dialog and refresh the page to update the UI
+            onOpenChange(false);
+            window.location.reload();
+          } catch (error: any) {
+            console.error('Google authentication failed:', error);
+            alert('Google authentication failed: ' + (error.response?.data?.error || 'Unknown error'));
+          }
+        }
+      };
+      
+      window.addEventListener('message', handleMessage);
     } catch (error) {
       console.error('Google auth error:', error);
     }
