@@ -1,8 +1,13 @@
-import express from 'express';
-import { register, login } from '../controllers/authController.js';
-import { googleAuth, getGoogleAuthUrl } from '../controllers/googleAuthController.js';
-import { validateUser, validateLogin } from '../middleware/validationMiddleware.js';
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const authController_js_1 = require("../controllers/authController.js");
+const googleAuthController_js_1 = require("../controllers/googleAuthController.js");
+const validationMiddleware_js_1 = require("../middleware/validationMiddleware.js");
+const router = express_1.default.Router();
 /**
  * @swagger
  * /api/auth/register:
@@ -46,7 +51,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post('/register', validateUser, register);
+router.post('/register', validationMiddleware_js_1.validateUser, authController_js_1.register);
 /**
  * @swagger
  * /api/auth/login:
@@ -86,7 +91,7 @@ router.post('/register', validateUser, register);
  *       500:
  *         description: Server error
  */
-router.post('/login', validateLogin, login);
+router.post('/login', validationMiddleware_js_1.validateLogin, authController_js_1.login);
 /**
  * @swagger
  * /api/auth/google:
@@ -119,7 +124,7 @@ router.post('/login', validateLogin, login);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/google', googleAuth);
+router.post('/google', googleAuthController_js_1.googleAuth);
 /**
  * @swagger
  * /api/auth/google/url:
@@ -138,6 +143,6 @@ router.post('/google', googleAuth);
  *                   type: string
  *                   description: Google OAuth authorization URL
  */
-router.get('/google/url', getGoogleAuthUrl);
-export default router;
+router.get('/google/url', googleAuthController_js_1.getGoogleAuthUrl);
+exports.default = router;
 //# sourceMappingURL=authRoutes.js.map

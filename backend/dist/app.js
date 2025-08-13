@@ -1,14 +1,19 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import swaggerUi from 'swagger-ui-express';
-dotenv.config();
-import authRoutes from './routes/authRoutes.js';
-import noteRoutes from './routes/noteRoutes.js';
-import { errorHandler, notFound } from './middleware/errorHandler.js';
-import { requestLogger } from './middleware/logger.js';
-import { specs } from './config/swagger.js';
-const app = express();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+dotenv_1.default.config();
+const authRoutes_js_1 = __importDefault(require("./routes/authRoutes.js"));
+const noteRoutes_js_1 = __importDefault(require("./routes/noteRoutes.js"));
+const errorHandler_js_1 = require("./middleware/errorHandler.js");
+const logger_js_1 = require("./middleware/logger.js");
+const swagger_js_1 = require("./config/swagger.js");
+const app = (0, express_1.default)();
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
         ? [
@@ -20,18 +25,18 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 // Middleware
-app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(requestLogger);
+app.use((0, cors_1.default)(corsOptions));
+app.use(express_1.default.json({ limit: '10mb' }));
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use(logger_js_1.requestLogger);
 // for swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_js_1.specs, {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'NoteTaker API Documentation'
 }));
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/notes', noteRoutes);
+app.use('/api/auth', authRoutes_js_1.default);
+app.use('/api/notes', noteRoutes_js_1.default);
 // Health check
 app.get('/health', (req, res) => {
     res.json({
@@ -41,7 +46,7 @@ app.get('/health', (req, res) => {
     });
 });
 // 404 
-app.use(notFound);
-app.use(errorHandler);
-export default app;
+app.use(errorHandler_js_1.notFound);
+app.use(errorHandler_js_1.errorHandler);
+exports.default = app;
 //# sourceMappingURL=app.js.map

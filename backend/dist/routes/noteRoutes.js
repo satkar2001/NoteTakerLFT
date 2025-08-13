@@ -1,8 +1,13 @@
-import express from 'express';
-import { createNote, getNotes, getNoteById, updateNote, deleteNote, convertLocalNotes, } from '../controllers/noteController.js';
-import { authenticate } from '../middleware/authMiddleware.js';
-import { validateNote } from '../middleware/validationMiddleware.js';
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const noteController_js_1 = require("../controllers/noteController.js");
+const authMiddleware_js_1 = require("../middleware/authMiddleware.js");
+const validationMiddleware_js_1 = require("../middleware/validationMiddleware.js");
+const router = express_1.default.Router();
 /**
  * @swagger
  * /api/notes/local:
@@ -66,7 +71,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/local', validateNote, createNote);
+router.post('/local', validationMiddleware_js_1.validateNote, noteController_js_1.createNote);
 /**
  * @swagger
  * /api/notes:
@@ -117,7 +122,7 @@ router.post('/local', validateNote, createNote);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticate, validateNote, createNote);
+router.post('/', authMiddleware_js_1.authenticate, validationMiddleware_js_1.validateNote, noteController_js_1.createNote);
 /**
  * @swagger
  * /api/notes:
@@ -180,7 +185,7 @@ router.post('/', authenticate, validateNote, createNote);
  *       500:
  *         description: Server error
  */
-router.get('/', authenticate, getNotes);
+router.get('/', authMiddleware_js_1.authenticate, noteController_js_1.getNotes);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -213,7 +218,7 @@ router.get('/', authenticate, getNotes);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticate, getNoteById);
+router.get('/:id', authMiddleware_js_1.authenticate, noteController_js_1.getNoteById);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -270,7 +275,7 @@ router.get('/:id', authenticate, getNoteById);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticate, validateNote, updateNote);
+router.put('/:id', authMiddleware_js_1.authenticate, validationMiddleware_js_1.validateNote, noteController_js_1.updateNote);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -307,7 +312,7 @@ router.put('/:id', authenticate, validateNote, updateNote);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticate, deleteNote);
+router.delete('/:id', authMiddleware_js_1.authenticate, noteController_js_1.deleteNote);
 /**
  * @swagger
  * /api/notes/convert-local:
@@ -359,6 +364,6 @@ router.delete('/:id', authenticate, deleteNote);
  *       500:
  *         description: Server error
  */
-router.post('/convert-local', authenticate, convertLocalNotes);
-export default router;
+router.post('/convert-local', authMiddleware_js_1.authenticate, noteController_js_1.convertLocalNotes);
+exports.default = router;
 //# sourceMappingURL=noteRoutes.js.map

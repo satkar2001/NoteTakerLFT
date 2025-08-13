@@ -1,8 +1,14 @@
-import { OAuth2Client } from 'google-auth-library';
-import prisma from '../lib/prismaClient.js';
-import jwt from 'jsonwebtoken';
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, process.env.GOOGLE_REDIRECT_URI);
-export const googleAuth = async (req, res) => {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGoogleAuthUrl = exports.googleAuth = void 0;
+const google_auth_library_1 = require("google-auth-library");
+const prismaClient_js_1 = __importDefault(require("../lib/prismaClient.js"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const client = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, process.env.GOOGLE_REDIRECT_URI);
+const googleAuth = async (req, res) => {
     try {
         const { code } = req.body;
         // Exchange code for tokens
@@ -26,11 +32,11 @@ export const googleAuth = async (req, res) => {
             return res.status(500).json({ error: 'Email not provided by Google' });
         }
         // Find or create user
-        let user = await prisma.user.findUnique({
+        let user = await prismaClient_js_1.default.user.findUnique({
             where: { email }
         });
         if (!user) {
-            user = await prisma.user.create({
+            user = await prismaClient_js_1.default.user.create({
                 data: {
                     email,
                     name: name || null,
@@ -41,7 +47,7 @@ export const googleAuth = async (req, res) => {
         }
         else if (!user.googleId) {
             // Link existing account
-            user = await prisma.user.update({
+            user = await prismaClient_js_1.default.user.update({
                 where: { email },
                 data: {
                     googleId,
@@ -54,7 +60,7 @@ export const googleAuth = async (req, res) => {
         if (!jwtSecret) {
             return res.status(500).json({ error: 'JWT secret not configured' });
         }
-        const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '1d' });
+        const token = jsonwebtoken_1.default.sign({ userId: user.id }, jwtSecret, { expiresIn: '1d' });
         res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
     }
     catch (error) {
@@ -62,7 +68,8 @@ export const googleAuth = async (req, res) => {
         res.status(500).json({ error: 'Google authentication failed' });
     }
 };
-export const getGoogleAuthUrl = (req, res) => {
+exports.googleAuth = googleAuth;
+const getGoogleAuthUrl = (req, res) => {
     const url = client.generateAuthUrl({
         access_type: 'offline',
         scope: [
@@ -72,4 +79,5 @@ export const getGoogleAuthUrl = (req, res) => {
     });
     res.json({ url });
 };
+exports.getGoogleAuthUrl = getGoogleAuthUrl;
 //# sourceMappingURL=googleAuthController.js.map

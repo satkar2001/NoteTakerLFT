@@ -1,6 +1,12 @@
-import prisma from '../lib/prismaClient.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertLocalNotes = exports.deleteNote = exports.updateNote = exports.getNoteById = exports.getNotes = exports.createNote = void 0;
+const prismaClient_js_1 = __importDefault(require("../lib/prismaClient.js"));
 // Create a new note (can be used by both authenticated and unauthenticated users)
-export const createNote = async (req, res) => {
+const createNote = async (req, res) => {
     try {
         const { title, content, tags, isLocal } = req.body;
         // If it's a local note (before signup), just return success
@@ -19,7 +25,7 @@ export const createNote = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ error: 'Authentication required' });
         }
-        const note = await prisma.note.create({
+        const note = await prismaClient_js_1.default.note.create({
             data: {
                 title,
                 content,
@@ -33,8 +39,9 @@ export const createNote = async (req, res) => {
         res.status(500).json({ error: 'Failed to create note' });
     }
 };
+exports.createNote = createNote;
 // Get all notes for the logged-in user with pagination and filtering
-export const getNotes = async (req, res) => {
+const getNotes = async (req, res) => {
     try {
         const userId = req.userId;
         if (!userId) {
@@ -72,13 +79,13 @@ export const getNotes = async (req, res) => {
         orderBy[sortBy] = sortOrder;
         // Get notes with pagination
         const [notes, totalCount] = await Promise.all([
-            prisma.note.findMany({
+            prismaClient_js_1.default.note.findMany({
                 where,
                 orderBy,
                 skip,
                 take: limit,
             }),
-            prisma.note.count({ where })
+            prismaClient_js_1.default.note.count({ where })
         ]);
         const totalPages = Math.ceil(totalCount / limit);
         res.json({
@@ -97,8 +104,9 @@ export const getNotes = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch notes' });
     }
 };
+exports.getNotes = getNotes;
 // Get a single note by ID
-export const getNoteById = async (req, res) => {
+const getNoteById = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.userId;
@@ -108,7 +116,7 @@ export const getNoteById = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: 'Note ID is required' });
         }
-        const note = await prisma.note.findFirst({
+        const note = await prismaClient_js_1.default.note.findFirst({
             where: { id, userId },
         });
         if (!note) {
@@ -120,8 +128,9 @@ export const getNoteById = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch note' });
     }
 };
+exports.getNoteById = getNoteById;
 // Update a note
-export const updateNote = async (req, res) => {
+const updateNote = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, content, tags } = req.body;
@@ -132,13 +141,13 @@ export const updateNote = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: 'Note ID is required' });
         }
-        const note = await prisma.note.findFirst({
+        const note = await prismaClient_js_1.default.note.findFirst({
             where: { id, userId },
         });
         if (!note) {
             return res.status(404).json({ error: 'Note not found or unauthorized' });
         }
-        const updatedNote = await prisma.note.update({
+        const updatedNote = await prismaClient_js_1.default.note.update({
             where: { id },
             data: {
                 title,
@@ -152,8 +161,9 @@ export const updateNote = async (req, res) => {
         res.status(500).json({ error: 'Failed to update note' });
     }
 };
+exports.updateNote = updateNote;
 // Delete a note
-export const deleteNote = async (req, res) => {
+const deleteNote = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.userId;
@@ -163,13 +173,13 @@ export const deleteNote = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: 'Note ID is required' });
         }
-        const note = await prisma.note.findFirst({
+        const note = await prismaClient_js_1.default.note.findFirst({
             where: { id, userId },
         });
         if (!note) {
             return res.status(404).json({ error: 'Note not found or unauthorized' });
         }
-        await prisma.note.delete({
+        await prismaClient_js_1.default.note.delete({
             where: { id },
         });
         res.json({ message: 'Note deleted successfully' });
@@ -178,8 +188,9 @@ export const deleteNote = async (req, res) => {
         res.status(500).json({ error: 'Failed to delete note' });
     }
 };
+exports.deleteNote = deleteNote;
 // Convert local notes to permanent notes
-export const convertLocalNotes = async (req, res) => {
+const convertLocalNotes = async (req, res) => {
     try {
         const { notes } = req.body;
         const userId = req.userId;
@@ -189,7 +200,7 @@ export const convertLocalNotes = async (req, res) => {
         if (!Array.isArray(notes)) {
             return res.status(400).json({ error: 'Notes array is required' });
         }
-        const convertedNotes = await Promise.all(notes.map(note => prisma.note.create({
+        const convertedNotes = await Promise.all(notes.map(note => prismaClient_js_1.default.note.create({
             data: {
                 title: note.title,
                 content: note.content,
@@ -206,4 +217,5 @@ export const convertLocalNotes = async (req, res) => {
         res.status(500).json({ error: 'Failed to convert notes' });
     }
 };
+exports.convertLocalNotes = convertLocalNotes;
 //# sourceMappingURL=noteController.js.map
