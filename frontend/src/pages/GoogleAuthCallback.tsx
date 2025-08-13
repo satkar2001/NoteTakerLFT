@@ -7,10 +7,14 @@ const GoogleAuthCallback: React.FC = () => {
   const [, setIsProcessing] = useState(true);
   
   useEffect(() => {
-    const code = searchParams.get('code');
+    const success = searchParams.get('success');
+    const token = searchParams.get('token');
+    const user = searchParams.get('user');
     const error = searchParams.get('error');
     
-    console.log('Google OAuth Callback - Code:', code);
+    console.log('Google OAuth Callback - Success:', success);
+    console.log('Google OAuth Callback - Token:', token ? 'Present' : 'Missing');
+    console.log('Google OAuth Callback - User:', user ? 'Present' : 'Missing');
     console.log('Google OAuth Callback - Error:', error);
     console.log('Google OAuth Callback - All params:', Object.fromEntries(searchParams.entries()));
     
@@ -20,22 +24,38 @@ const GoogleAuthCallback: React.FC = () => {
       return;
     }
     
-    if (code) {
-      // Send message to parent window (popup approach)
-      if (window.opener) {
-        window.opener.postMessage({
-          type: 'GOOGLE_AUTH_SUCCESS',
-          code
-        }, window.location.origin);
+    if (success === 'true' && token && user) {
+      try {
+        const userData = JSON.parse(decodeURIComponent(user));
         
-        // Close popup
-        window.close();
-      } else {
-        // Fallback if not in popup - redirect to home with code
-        window.location.href = `/?google_auth_code=${encodeURIComponent(code)}`;
+        // Store the token and user data
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify({
+          name: userData.name || '',
+          email: userData.email
+        }));
+        
+        // Send success message to parent window (popup approach)
+        if (window.opener) {
+          window.opener.postMessage({
+            type: 'GOOGLE_AUTH_SUCCESS',
+            token,
+            user: userData
+          }, window.location.origin);
+          
+          // Close popup
+          window.close();
+        } else {
+          // Fallback if not in popup - redirect to home
+          window.location.href = '/';
+        }
+      } catch (parseError) {
+        console.error('Error parsing user data:', parseError);
+        setError('Failed to process authentication data');
+        setIsProcessing(false);
       }
     } else {
-      setError('No authorization code received from Google');
+      setError('Invalid authentication response from server');
       setIsProcessing(false);
     }
   }, [searchParams]);

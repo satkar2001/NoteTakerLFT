@@ -116,23 +116,25 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
           window.removeEventListener('message', handleMessage);
           popup?.close();
           
-          // Handle successful Google auth by calling the backend
+          // Handle successful Google auth - token and user data are already processed
           try {
-            const response = await googleAuth(event.data.code);
-            
-            // Store the token and user data
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify({
-              name: response.user.name || '',
-              email: response.user.email
-            }));
-            
-            // Close the auth dialog and refresh the page to update the UI
-            onOpenChange(false);
-            window.location.reload();
+            // Store the token and user data (already processed by the callback page)
+            if (event.data.token && event.data.user) {
+              localStorage.setItem('token', event.data.token);
+              localStorage.setItem('user', JSON.stringify({
+                name: event.data.user.name || '',
+                email: event.data.user.email
+              }));
+              
+              // Close the auth dialog and refresh the page to update the UI
+              onOpenChange(false);
+              window.location.reload();
+            } else {
+              throw new Error('Missing token or user data');
+            }
           } catch (error: any) {
             console.error('Google authentication failed:', error);
-            alert('Google authentication failed: ' + (error.response?.data?.error || 'Unknown error'));
+            alert('Google authentication failed: ' + (error.message || 'Unknown error'));
           }
         }
       };
