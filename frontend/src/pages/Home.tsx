@@ -14,7 +14,7 @@ import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
 import { useNoteFilters } from '@/hooks/useNoteFilters';
-import { onAuthStateChanged, getCurrentUser, signOut } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from '@/lib/firebase';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
