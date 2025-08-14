@@ -1,205 +1,85 @@
-# 📝 NoteTaker - Full-Stack Note Management Application
+# NoteTakerLFT - Full-Stack Note Taking Application
 
-A modern, responsive note-taking application built with React, TypeScript, and Node.js. Features user authentication, real-time note management, and a clean, intuitive interface.
+A modern note-taking application built with React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean and minmal interface.
 
-## ✨ Features
+## What It Does
 
-- **User Authentication**: Secure email/password registration and login
-- **Note Management**: Create, edit, delete, and organize notes
-- **Rich Text Editor**: Full-featured editor with formatting options
-- **Search & Filter**: Find notes quickly with search and tag filtering
-- **Responsive Design**: Works seamlessly on desktop and mobile
-- **Offline Support**: Notes are saved locally when not authenticated
-- **Real-time Sync**: Notes sync across devices when logged in
+This app lets you create and manage notes with user authentication and real-time synchronization. You can write, edit, and organize your notes while they sync to your account when you're logged in , so that you can access it on any of your devices.
 
-## 🏗️ Architecture
+Key features include user registration and login, a rich text editor for formatting, search functionality to find notes quickly, and a responsive design that works on both desktop and mobile devices.
 
-### Frontend (React + TypeScript)
-- **React 18** with functional components and hooks
-- **TypeScript** for type safety and better development experience
-- **Vite** for fast development and optimized builds
-- **Tailwind CSS** for styling with shadcn/ui components
-- **React Router** for client-side routing
-- **Local Storage** for offline note persistence
+## How It's Built
 
-### Backend (Node.js + Express)
-- **Express.js** REST API with TypeScript
-- **Prisma ORM** for database operations
-- **PostgreSQL** for data persistence
-- **JWT** for secure authentication
-- **Swagger** for API documentation
-- **Winston** for structured logging
+The frontend uses React with TypeScript, built with Vite for fast development. Tailwind CSS was used for styling along with shadcn/ui components for a consistent look.
 
-### Database
-- **PostgreSQL** hosted on Render
-- **Prisma Migrations** for schema management
-- **User and Note models** with proper relationships
+The backend runs on Node.js with Express, using Prisma as the database ORM to connect to PostgreSQL. Authentication is handled with JWT tokens, and bcrypt for secure password hashing. The API is documented with Swagger for easy reference.
 
-## 🚀 Quick Start
+## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- npm or pnpm
-- PostgreSQL database
+You'll need Node.js 18 or higher, npm or pnpm, and access to a PostgreSQL database.
 
-### Installation
+First, clone the repository and install dependencies:
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/NoteTakerLFT.git
-   cd NoteTakerLFT
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # Install root dependencies
-   npm install
-   
-   # Install backend dependencies
-   cd backend
-   npm install
-   
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
-   ```
-
-3. **Set up environment variables**
-   
-   Create `.env` file in the `backend` directory:
-   ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/notetaker"
-   JWT_SECRET="your-super-secret-jwt-key"
-   NODE_ENV="development"
-   PORT=5000
-   ```
-
-4. **Set up the database**
-   ```bash
-   cd backend
-   npx prisma migrate dev
-   npx prisma generate
-   ```
-
-5. **Run the application**
-   ```bash
-   # Terminal 1 - Start backend
-   cd backend
-   npm run dev
-   
-   # Terminal 2 - Start frontend
-   cd frontend
-   npm run dev
-   ```
-
-6. **Open your browser**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
-   - API Docs: http://localhost:5000/api-docs
-
-## 📚 Key Libraries & Technologies
-
-### Frontend
-- **React 18**: UI framework with hooks
-- **TypeScript**: Type-safe JavaScript
-- **Vite**: Build tool and dev server
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: Reusable component library
-- **React Router**: Client-side routing
-- **Lucide React**: Icon library
-
-### Backend
-- **Express.js**: Web framework
-- **Prisma**: Database ORM
-- **PostgreSQL**: Relational database
-- **JWT**: Authentication tokens
-- **bcrypt**: Password hashing
-- **Winston**: Logging library
-- **Swagger**: API documentation
-
-### Development Tools
-- **ESLint**: Code linting
-- **TypeScript**: Static type checking
-- **Prisma Studio**: Database GUI
-- **Render**: Deployment platform
-
-## 🔧 Development
-
-### Project Structure
-```
-NoteTakerLFT/
-├── frontend/                 # React frontend
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/          # Page components
-│   │   ├── lib/            # Utility functions
-│   │   ├── hooks/          # Custom React hooks
-│   │   └── types/          # TypeScript type definitions
-│   └── public/             # Static assets
-├── backend/                 # Express backend
-│   ├── src/
-│   │   ├── controllers/    # Request handlers
-│   │   ├── middleware/     # Express middleware
-│   │   ├── routes/         # API routes
-│   │   ├── lib/            # Database and utilities
-│   │   └── config/         # Configuration files
-│   └── prisma/             # Database schema and migrations
-└── README.md
-```
-
-### Available Scripts
-
-**Backend:**
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run migrate      # Run database migrations
+git clone https://github.com/yourusername/NoteTakerLFT.git
+cd NoteTakerLFT
+npm install
+
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies  
+cd ../frontend
+npm install
 ```
 
-**Frontend:**
+Set up your environment by creating a `.env` file in the backend directory:
+
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/notetaker"
+JWT_SECRET="your-super-secret-jwt-key"
+NODE_ENV="development"
+PORT=5000
+```
+
+Initialize the database:
+
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
+cd backend
+npx prisma migrate dev
+npx prisma generate
 ```
 
-## 📊 Logging
+Start both the backend and frontend servers:
 
-The backend implements comprehensive logging using Winston:
+```bash
+# Terminal 1 - Backend
+cd backend
+npm run dev
 
-- **Request Logging**: All HTTP requests are logged with method, URL, status, and duration
-- **Error Logging**: Detailed error logs with stack traces
-- **Database Logging**: Connection status and query errors
-- **Authentication Logging**: Login attempts and failures
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+```
 
-**View logs:**
-- **Development**: Logs appear in the console
-- **Production**: Logs are written to `backend/logs/app.log`
+Open your browser to http://localhost:5173 for the app, or http://localhost:5000/api-docs to view the API documentation.
 
-## 🌐 Deployment
+## Project Organization
 
-The application is deployed on Render:
+The codebase is split into two main directories. The frontend contains all React components, pages, custom hooks, and TypeScript definitions. The backend houses the Express server with controllers, middleware, API routes, and database configuration.
 
-- **Frontend**: https://notetaker-frontend.onrender.com
-- **Backend**: https://notetaker-backend-jpgb.onrender.com
-- **Database**: PostgreSQL on Render
+Both parts of the application include comprehensive logging for debugging. In development, logs appear in your console, while production logs are saved to files.
 
-## 🤝 Contributing
+## Development Commands
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+For the backend:
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm run start` - Start production server
 
-## 📄 License
+For the frontend:
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm run preview` - Preview the production build
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
-- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
-- [Prisma](https://www.prisma.io/) for the excellent database ORM
-- [Render](https://render.com/) for the hosting platform
