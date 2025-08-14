@@ -2,7 +2,7 @@ import prisma from '../lib/prismaClient.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { sendOTPEmail, sendWelcomeEmail } from '../utils/emailService.js';
+import { sendOTPEmail } from '../utils/emailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_key';
 
@@ -38,15 +38,6 @@ export const register = async (req: Request, res: Response) => {
       { expiresIn: '7d' }
     );
 
-    // Send welcome email (optional)
-    if (user.name) {
-      try {
-        await sendWelcomeEmail(user.email, user.name);
-      } catch (error) {
-        console.error('Failed to send welcome email:', error);
-        // Don't fail registration if welcome email fails
-      }
-    }
 
     res.json({
       token,

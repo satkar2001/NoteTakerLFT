@@ -6,10 +6,9 @@ const PORT = process.env.PORT || 10000;
 // Test email service on startup
 testEmailService().then(isConfigured => {
   if (isConfigured) {
-    console.log('✅ Email service ready');
+    console.log('Email service ready');
   } else {
-    console.log('⚠️  Email service not configured - password reset will not work');
-    console.log('📧 See EMAIL_SETUP.md for configuration instructions');
+    console.log('Email service not working proper G');
   }
 });
 
