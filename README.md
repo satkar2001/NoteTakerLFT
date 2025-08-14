@@ -2,6 +2,10 @@
 
 A minimal but featureful Full Stack web application created using React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean interface.
 
+##demo:
+![Demo](/demo.gif)
+
+
 ## What It Does
 
 This app lets you create and manage notes with user authentication and real-time synchronization. You can write, edit, and organize your notes while they sync to your account when you're logged in , so that you can access it on any of your devices.
