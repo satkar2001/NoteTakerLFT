@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
   createNewNote: () => void;
+  isLoggedIn?: boolean;
+  onSignInClick?: () => void;
+  onCreateNewNote?: () => void;
+  stats?: any;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ createNewNote }) => {

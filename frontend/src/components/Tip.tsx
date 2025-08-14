@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Lightbulb, Sparkles } from 'lucide-react';
 
 interface TipProps {
   isLoggedIn: boolean;
@@ -10,8 +11,9 @@ const Tip: React.FC<TipProps> = ({ isLoggedIn, onSignInClick }) => {
   if (isLoggedIn) {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+        <Sparkles className="h-4 w-4 text-blue-600" />
         <span className="text-sm text-blue-700 font-medium">
-          Your notes are safely synced! 
+          Your notes are safely synced! ✨
         </span>
       </div>
     );
@@ -19,9 +21,9 @@ const Tip: React.FC<TipProps> = ({ isLoggedIn, onSignInClick }) => {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
-      <div className="flex items-center gap-2">
-        {/* <Lightbulb className="h-4 w-4 text-amber-600" /> */}
-        <div className="flex-1">
+             <div className="flex items-center gap-2">
+         <Lightbulb className="h-4 w-4 text-amber-600" />
+         <div className="flex-1">
           <p className="text-sm text-amber-700 font-medium">
             Sign in to save your notes permanently
           </p>

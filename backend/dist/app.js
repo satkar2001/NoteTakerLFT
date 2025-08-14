@@ -1,52 +1,61 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-dotenv_1.default.config();
-const authRoutes_js_1 = __importDefault(require("./routes/authRoutes.js"));
-const noteRoutes_js_1 = __importDefault(require("./routes/noteRoutes.js"));
-const errorHandler_js_1 = require("./middleware/errorHandler.js");
-const logger_js_1 = require("./middleware/logger.js");
-const swagger_js_1 = require("./config/swagger.js");
-const app = (0, express_1.default)();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+dotenv.config();
+import authRoutes from './routes/authRoutes.js';
+import noteRoutes from './routes/noteRoutes.js';
+import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { requestLogger } from './middleware/logger.js';
+import { specs } from './config/swagger.js';
+import prisma from './lib/prismaClient.js';
+const app = express();
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
         ? [
             'https://notetaker-frontend.onrender.com',
-            'https://your-frontend-domain.com'
         ]
-        : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+        : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://localhost:5000'],
     credentials: true,
     optionsSuccessStatus: 200
 };
 // Middleware
-app.use((0, cors_1.default)(corsOptions));
-app.use(express_1.default.json({ limit: '10mb' }));
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use(logger_js_1.requestLogger);
-// for swagger
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_js_1.specs, {
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'NoteTaker API Documentation'
 }));
-// Routes
-app.use('/api/auth', authRoutes_js_1.default);
-app.use('/api/notes', noteRoutes_js_1.default);
-// Health check
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
+app.get('/', (req, res) => {
+    res.send('Server is running!');
 });
-// 404 
-app.use(errorHandler_js_1.notFound);
-app.use(errorHandler_js_1.errorHandler);
-exports.default = app;
+app.use('/api/auth', authRoutes);
+app.use('/api/notes', noteRoutes);
+app.get('/health', async (req, res) => {
+    try {
+        // Test database connection
+        await prisma.$queryRaw `SELECT 1`;
+        res.json({
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development',
+            database: 'connected'
+        });
+    }
+    catch (error) {
+        console.error('Health check failed:', error);
+        res.status(500).json({
+            status: 'error',
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development',
+            database: 'disconnected',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+app.use(notFound);
+app.use(errorHandler);
+export default app;
 //# sourceMappingURL=app.js.map

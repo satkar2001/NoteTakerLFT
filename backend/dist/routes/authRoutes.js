@@ -1,13 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const authController_js_1 = require("../controllers/authController.js");
-const googleAuthController_js_1 = require("../controllers/googleAuthController.js");
-const validationMiddleware_js_1 = require("../middleware/validationMiddleware.js");
-const router = express_1.default.Router();
+import express from 'express';
+import { register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { validateUser, validateLogin } from '../middleware/validationMiddleware.js';
+const router = express.Router();
 /**
  * @swagger
  * /api/auth/register:
@@ -51,7 +45,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Server error
  */
-router.post('/register', validationMiddleware_js_1.validateUser, authController_js_1.register);
+router.post('/register', validateUser, register);
 /**
  * @swagger
  * /api/auth/login:
@@ -91,7 +85,7 @@ router.post('/register', validationMiddleware_js_1.validateUser, authController_
  *       500:
  *         description: Server error
  */
-router.post('/login', validationMiddleware_js_1.validateLogin, authController_js_1.login);
+router.post('/login', validateLogin, login);
 /**
  * @swagger
  * /api/auth/google:
@@ -124,25 +118,91 @@ router.post('/login', validationMiddleware_js_1.validateLogin, authController_js
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/google', googleAuthController_js_1.googleAuth);
+// Google OAuth routes removed - using Firebase instead
 /**
  * @swagger
- * /api/auth/google/url:
- *   get:
- *     summary: Get Google OAuth URL
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
  *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User email address
  *     responses:
  *       200:
- *         description: Google OAuth URL
+ *         description: Reset email sent successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 url:
+ *                 message:
  *                   type: string
- *                   description: Google OAuth authorization URL
+ *                   example: "Reset email sent successfully"
+ *       400:
+ *         description: Invalid email
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
-router.get('/google/url', googleAuthController_js_1.getGoogleAuthUrl);
-exports.default = router;
+router.post('/forgot-password', forgotPassword);
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset password with OTP
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User email address
+ *               otp:
+ *                 type: string
+ *                 description: One-time password from email
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: New password (minimum 6 characters)
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset successfully"
+ *       400:
+ *         description: Invalid OTP or password
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/reset-password', resetPassword);
+export default router;
 //# sourceMappingURL=authRoutes.js.map

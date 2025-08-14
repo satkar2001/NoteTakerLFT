@@ -85,7 +85,8 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
           saveLocalNote({
             title: note.title || 'Untitled',
             content: note.content || '',
-            tags
+            tags,
+            isFavorite: false
           });
         }
       } else if (id) {
@@ -93,7 +94,8 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
           updateLocalNote(id, {
             title: note.title || 'Untitled',
             content: note.content || '',
-            tags
+            tags,
+            isFavorite: note.isFavorite || false
           });
         } else if (isAuthenticated()) {
           await updateNote(id, {

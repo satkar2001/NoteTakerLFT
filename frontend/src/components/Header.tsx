@@ -42,7 +42,7 @@ interface HeaderProps {
   user?: { name: string; email: string } | null;
   setIsLoggedIn: (loggedIn: boolean) => void;
   setShowAuthDialog: (show: boolean) => void;
-  setIsAuthMode: (mode: 'login' | 'register') => void;
+  setIsAuthMode: (mode: 'login' | 'register' | 'forgot-password' | 'reset-password') => void;
   onLogout: () => void;
 }
 

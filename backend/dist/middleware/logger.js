@@ -1,29 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requestLogger = exports.logger = exports.Logger = exports.LogLevel = void 0;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
+import fs from 'fs';
+import path from 'path';
 // Log levels
-var LogLevel;
+export var LogLevel;
 (function (LogLevel) {
     LogLevel["ERROR"] = "ERROR";
     LogLevel["WARN"] = "WARN";
     LogLevel["INFO"] = "INFO";
     LogLevel["DEBUG"] = "DEBUG";
-})(LogLevel || (exports.LogLevel = LogLevel = {}));
+})(LogLevel || (LogLevel = {}));
 // Logger class
-class Logger {
+export class Logger {
+    logFile;
     constructor() {
-        this.logFile = path_1.default.join(process.cwd(), 'logs', 'app.log');
+        this.logFile = path.join(process.cwd(), 'logs', 'app.log');
         this.ensureLogDirectory();
     }
     ensureLogDirectory() {
-        const logDir = path_1.default.dirname(this.logFile);
-        if (!fs_1.default.existsSync(logDir)) {
-            fs_1.default.mkdirSync(logDir, { recursive: true });
+        const logDir = path.dirname(this.logFile);
+        if (!fs.existsSync(logDir)) {
+            fs.mkdirSync(logDir, { recursive: true });
         }
     }
     formatMessage(level, message, meta) {
@@ -32,7 +27,7 @@ class Logger {
         return `[${timestamp}] ${level}: ${message}${metaStr}\n`;
     }
     writeToFile(message) {
-        fs_1.default.appendFileSync(this.logFile, message);
+        fs.appendFileSync(this.logFile, message);
     }
     error(message, meta) {
         const logMessage = this.formatMessage(LogLevel.ERROR, message, meta);
@@ -57,11 +52,10 @@ class Logger {
         }
     }
 }
-exports.Logger = Logger;
 // Create logger instance
-exports.logger = new Logger();
+export const logger = new Logger();
 // Request logging middleware
-const requestLogger = (req, res, next) => {
+export const requestLogger = (req, res, next) => {
     const start = Date.now();
     res.on('finish', () => {
         const duration = Date.now() - start;
@@ -74,13 +68,12 @@ const requestLogger = (req, res, next) => {
             ip: req.ip
         };
         if (res.statusCode >= 400) {
-            exports.logger.error(`${req.method} ${req.url} - ${res.statusCode}`, logData);
+            logger.error(`${req.method} ${req.url} - ${res.statusCode}`, logData);
         }
         else {
-            exports.logger.info(`${req.method} ${req.url} - ${res.statusCode}`, logData);
+            logger.info(`${req.method} ${req.url} - ${res.statusCode}`, logData);
         }
     });
     next();
 };
-exports.requestLogger = requestLogger;
 //# sourceMappingURL=logger.js.map

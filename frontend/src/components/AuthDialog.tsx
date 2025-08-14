@@ -108,7 +108,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
 
         <div className="space-y-6">
           
-          {}
           {error && (
             <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg border border-red-200">
               {error}
@@ -201,35 +200,21 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
               )}
             </div>
             
-            {/* Forgot Password Link */}
-            {isAuthMode === 'login' && (
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setIsAuthMode('forgot-password')}
-                  className="text-sm text-gray-600 hover:text-black transition-colors"
-                  disabled={isLoading}
-                >
-                  Forgot password?
-                </button>
-              </div>
-            )}
-            
-            {/* Forgot Password Link */}
-            {isAuthMode === 'login' && (
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setIsAuthMode('forgot-password')}
-                  className="text-sm text-gray-600 hover:text-black transition-colors"
-                  disabled={isLoading}
-                >
-                  Forgot password?
-                </button>
-              </div>
-            )}
-            
-            {}
+                         {/* Forgot Password Link */}
+             {isAuthMode === 'login' && (
+               <div className="text-right">
+                 <button
+                   type="button"
+                   onClick={() => setIsAuthMode('forgot-password')}
+                   className="text-sm text-gray-600 hover:text-black transition-colors"
+                   disabled={isLoading}
+                 >
+                   Forgot password?
+                 </button>
+               </div>
+             )}
+             
+             {/* Submit Button */}
                          <Button
                type="submit"
                disabled={isLoading}
@@ -244,10 +229,10 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
                 isAuthMode === 'login' ? 'Sign in' : 'Create account'
               )}
             </Button>
-          </form>
-          
-          {}
-          <div className="text-center text-sm">
+                     </form>
+           
+           {/* Toggle Mode */}
+           <div className="text-center text-sm">
             <span className="text-gray-500">
               {isAuthMode === 'login' ? "Don't have an account? " : "Already have an account? "}
             </span>

@@ -187,7 +187,7 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
-  const handleForgotPasswordSuccess = () => {
+  const handleForgotPasswordSuccess = (email: string) => {
     setIsAuthMode('reset-password');
   };
 
@@ -217,7 +217,13 @@ const Home: React.FC = () => {
       />
 
       <div className="flex flex-col lg:flex-row">
-        <Sidebar createNewNote={handleCreateNewNote} />
+        <Sidebar 
+          createNewNote={handleCreateNewNote}
+          isLoggedIn={isLoggedIn}
+          onSignInClick={handleSignInClick}
+          onCreateNewNote={handleCreateNewNote}
+          stats={stats}
+        />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           {/* Stats Bar */}

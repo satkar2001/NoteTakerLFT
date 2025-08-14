@@ -1,10 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.specs = void 0;
-const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
+import swaggerJsdoc from 'swagger-jsdoc';
 const options = {
     definition: {
         openapi: '3.0.0',
@@ -12,13 +6,13 @@ const options = {
             title: 'NoteTaker API',
             version: '1.0.0',
             description: 'Notes App for LFT by Satkar',
-         
-            
         },
         servers: [
             {
-                url: 'https://notetaker-backend-jpgb.onrender.com',
-                description: 'Development server'
+                url: process.env.NODE_ENV === 'production'
+                    ? 'https://notetaker-backend-jpgb.onrender.com'
+                    : 'https://notetaker-backend-jpgb.onrender.com',
+                description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
             }
         ],
         components: {
@@ -187,12 +181,12 @@ const options = {
                 description: 'User authentication and authorization endpoints'
             },
             {
-                name: 'NoteTakerLFT',
-                description: 'Note taking application'
+                name: 'Notes',
+                description: 'Note CRUD operations'
             }
         ]
     },
     apis: ['./src/routes/*.ts', './src/controllers/*.ts']
 };
-exports.specs = (0, swagger_jsdoc_1.default)(options);
+export const specs = swaggerJsdoc(options);
 //# sourceMappingURL=swagger.js.map

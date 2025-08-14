@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const noteController_js_1 = require("../controllers/noteController.js");
-const authMiddleware_js_1 = require("../middleware/authMiddleware.js");
-const validationMiddleware_js_1 = require("../middleware/validationMiddleware.js");
-const router = express_1.default.Router();
+import express from 'express';
+import { createNote, getNotes, getNoteById, updateNote, deleteNote, convertLocalNotes, toggleFavorite, } from '../controllers/noteController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
+import { validateNote } from '../middleware/validationMiddleware.js';
+const router = express.Router();
 /**
  * @swagger
  * /api/notes/local:
@@ -71,7 +66,7 @@ const router = express_1.default.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/local', validationMiddleware_js_1.validateNote, noteController_js_1.createNote);
+router.post('/local', validateNote, createNote);
 /**
  * @swagger
  * /api/notes:
@@ -122,7 +117,7 @@ router.post('/local', validationMiddleware_js_1.validateNote, noteController_js_
  *       500:
  *         description: Server error
  */
-router.post('/', authMiddleware_js_1.authenticate, validationMiddleware_js_1.validateNote, noteController_js_1.createNote);
+router.post('/', authenticate, validateNote, createNote);
 /**
  * @swagger
  * /api/notes:
@@ -185,7 +180,7 @@ router.post('/', authMiddleware_js_1.authenticate, validationMiddleware_js_1.val
  *       500:
  *         description: Server error
  */
-router.get('/', authMiddleware_js_1.authenticate, noteController_js_1.getNotes);
+router.get('/', authenticate, getNotes);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -218,7 +213,7 @@ router.get('/', authMiddleware_js_1.authenticate, noteController_js_1.getNotes);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authMiddleware_js_1.authenticate, noteController_js_1.getNoteById);
+router.get('/:id', authenticate, getNoteById);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -275,7 +270,7 @@ router.get('/:id', authMiddleware_js_1.authenticate, noteController_js_1.getNote
  *       500:
  *         description: Server error
  */
-router.put('/:id', authMiddleware_js_1.authenticate, validationMiddleware_js_1.validateNote, noteController_js_1.updateNote);
+router.put('/:id', authenticate, validateNote, updateNote);
 /**
  * @swagger
  * /api/notes/{id}:
@@ -312,7 +307,40 @@ router.put('/:id', authMiddleware_js_1.authenticate, validationMiddleware_js_1.v
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authMiddleware_js_1.authenticate, noteController_js_1.deleteNote);
+router.delete('/:id', authenticate, deleteNote);
+/**
+ * @swagger
+ * /api/notes/{id}/toggle-favorite:
+ *   patch:
+ *     summary: Toggle favorite status of a note
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Note ID
+ *     responses:
+ *       200:
+ *         description: Favorite status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Note'
+ *       400:
+ *         description: Invalid note ID
+ *       401:
+ *         description: Authentication required
+ *       404:
+ *         description: Note not found or unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.patch('/:id/toggle-favorite', authenticate, toggleFavorite);
 /**
  * @swagger
  * /api/notes/convert-local:
@@ -364,6 +392,6 @@ router.delete('/:id', authMiddleware_js_1.authenticate, noteController_js_1.dele
  *       500:
  *         description: Server error
  */
-router.post('/convert-local', authMiddleware_js_1.authenticate, noteController_js_1.convertLocalNotes);
-exports.default = router;
+router.post('/convert-local', authenticate, convertLocalNotes);
+export default router;
 //# sourceMappingURL=noteRoutes.js.map

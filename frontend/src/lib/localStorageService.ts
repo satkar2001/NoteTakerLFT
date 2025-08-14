@@ -12,13 +12,14 @@ export const getLocalNotes = (): LocalNote[] => {
   }
 };
 
-export const saveLocalNote = (note: Omit<LocalNote, 'id' | 'createdAt' | 'isLocal'>): LocalNote => {
+export const saveLocalNote = (note: Omit<LocalNote, 'id' | 'createdAt' | 'isLocal'> & { isFavorite?: boolean }): LocalNote => {
   const localNotes = getLocalNotes();
   const newNote: LocalNote = {
     ...note,
     id: `local_${Date.now()}`,
     createdAt: new Date().toISOString(),
     isLocal: true,
+    isFavorite: note.isFavorite || false,
   };
   
   localNotes.unshift(newNote);
@@ -26,7 +27,7 @@ export const saveLocalNote = (note: Omit<LocalNote, 'id' | 'createdAt' | 'isLoca
   return newNote;
 };
 
-export const updateLocalNote = (id: string, updates: Partial<LocalNote>): LocalNote | null => {
+export const updateLocalNote = (id: string, updates: Partial<LocalNote> & { isFavorite?: boolean }): LocalNote | null => {
   const localNotes = getLocalNotes();
   const noteIndex = localNotes.findIndex(note => note.id === id);
   
