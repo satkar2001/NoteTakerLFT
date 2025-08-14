@@ -10,7 +10,7 @@ interface SidebarProps {
   stats?: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ createNewNote, isLoggedIn }) => {
+const Sidebar: React.FC<SidebarProps> = ({ createNewNote }) => {
   return (
     <aside className="w-full lg:w-16 lg:mt-4 lg:border-r lg:border-gray-100 bg-gray-50/30 p-4 lg:p-4 flex lg:flex-col items-center justify-center lg:justify-start space-y-0 lg:space-y-4 space-x-4 lg:space-x-0">
       {/* Mobile: Full-width button, Desktop: Circular button */}

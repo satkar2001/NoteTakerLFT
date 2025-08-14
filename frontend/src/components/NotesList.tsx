@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import NoteCard from './NoteCard';
 import type { Note, LocalNote, ViewMode } from '@/types';
 
