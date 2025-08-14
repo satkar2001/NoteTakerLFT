@@ -1,7 +1,10 @@
 import nodemailer from 'nodemailer';
 
+// Email service configuration
+const EMAIL_SERVICE = process.env.EMAIL_SERVICE || 'gmail'; // 'gmail' or 'resend'
+
 // Create a transporter using Gmail SMTP
-const createTransporter = () => {
+const createGmailTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -11,13 +14,47 @@ const createTransporter = () => {
   });
 };
 
+// Create a transporter using Resend SMTP
+const createResendTransporter = () => {
+  return nodemailer.createTransport({
+    host: 'smtp.resend.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: 'resend', // This is always 'resend' for Resend
+      pass: process.env.RESEND_API_KEY, // Your Resend API key
+    },
+  });
+};
+
+// Get the appropriate transporter
+const getTransporter = () => {
+  if (EMAIL_SERVICE === 'resend' && process.env.RESEND_API_KEY) {
+    return createResendTransporter();
+  }
+  
+  // Fallback to Gmail or use Gmail as default
+  if (process.env.EMAIL_USER && process.env.EMAIL_APP_PASSWORD) {
+    return createGmailTransporter();
+  }
+  
+  // If no email service is configured, return null
+  console.warn('No email service configured. Please set up Gmail or Resend credentials.');
+  return null;
+};
+
 // Send OTP email
 export const sendOTPEmail = async (email: string, otp: string, userName?: string) => {
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
+    
+    if (!transporter) {
+      console.error('No email transporter available. Please configure email service.');
+      return false;
+    }
     
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER || 'noreply@yourdomain.com',
       to: email,
       subject: 'Password Reset OTP - Note Taker LFT',
       html: `
@@ -64,10 +101,15 @@ export const sendOTPEmail = async (email: string, otp: string, userName?: string
 // Send welcome email (optional)
 export const sendWelcomeEmail = async (email: string, userName: string) => {
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
+    
+    if (!transporter) {
+      console.error('No email transporter available. Please configure email service.');
+      return false;
+    }
     
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER || 'noreply@yourdomain.com',
       to: email,
       subject: 'Welcome to Note Taker LFT! 🎉',
       html: `
@@ -112,6 +154,28 @@ export const sendWelcomeEmail = async (email: string, userName: string) => {
     return true;
   } catch (error) {
     console.error('Failed to send welcome email:', error);
+    return false;
+  }
+};
+
+// Test email service configuration
+export const testEmailService = async () => {
+  const transporter = getTransporter();
+  
+  if (!transporter) {
+    console.log('❌ No email service configured');
+    console.log('Please set up either:');
+    console.log('1. Gmail: EMAIL_USER and EMAIL_APP_PASSWORD');
+    console.log('2. Resend: RESEND_API_KEY');
+    return false;
+  }
+  
+  try {
+    await transporter.verify();
+    console.log('✅ Email service configured successfully');
+    return true;
+  } catch (error) {
+    console.error('❌ Email service configuration failed:', error);
     return false;
   }
 };
