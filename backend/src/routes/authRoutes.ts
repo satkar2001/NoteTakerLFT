@@ -90,39 +90,6 @@ router.post('/register', validateUser, register);
  */
 router.post('/login', validateLogin, login);
 
-/**
- * @swagger
- * /api/auth/google:
- *   post:
- *     summary: Authenticate with Google OAuth
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - code
- *             properties:
- *               code:
- *                 type: string
- *                 description: Authorization code from Google OAuth
- *     responses:
- *       200:
- *         description: Google authentication successful
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
- *       500:
- *         description: Google authentication failed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-// Google OAuth routes removed - using Firebase instead
 
 /**
  * @swagger
