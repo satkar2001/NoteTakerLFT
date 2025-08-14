@@ -1,6 +1,6 @@
 # NoteTakerLFT - Full-Stack Note Taking Application
 
-A modern note-taking application built with React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean and minmal interface.
+A minimal but featureful Full Stack web application created using React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean interface.
 
 ## What It Does
 
