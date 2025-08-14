@@ -6,6 +6,7 @@ import {
   updateNote,
   deleteNote,
   convertLocalNotes,
+  toggleFavorite,
 } from '../controllers/noteController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { validateNote } from '../middleware/validationMiddleware.js';
@@ -322,6 +323,40 @@ router.put('/:id', authenticate, validateNote, updateNote);
  *         description: Server error
  */
 router.delete('/:id', authenticate, deleteNote);
+
+/**
+ * @swagger
+ * /api/notes/{id}/toggle-favorite:
+ *   patch:
+ *     summary: Toggle favorite status of a note
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Note ID
+ *     responses:
+ *       200:
+ *         description: Favorite status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Note'
+ *       400:
+ *         description: Invalid note ID
+ *       401:
+ *         description: Authentication required
+ *       404:
+ *         description: Note not found or unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.patch('/:id/toggle-favorite', authenticate, toggleFavorite);
 
 /**
  * @swagger

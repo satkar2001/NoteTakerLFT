@@ -10,7 +10,7 @@ import SortButton from '@/components/SortButton';
 import type { Note, LocalNote } from '@/types';
 import type { FilterOptions } from '@/components/FilterMenu';
 import type { SortOptions } from '@/components/SortButton';
-import { getNotes, deleteNote, convertLocalNotes } from '@/lib/noteService';
+import { getNotes, deleteNote, convertLocalNotes, toggleFavorite } from '@/lib/noteService';
 import { login, register, isAuthenticated, setToken, logout } from '@/lib/authService';
 import { getLocalNotes, deleteLocalNote, clearLocalNotes } from '@/lib/localStorageService';
 import { useNoteFilters } from '@/hooks/useNoteFilters';
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const [isAuthMode, setIsAuthMode] = useState<'login' | 'register'>('login');
+  const [isAuthMode, setIsAuthMode] = useState<'login' | 'register' | 'forgot-password' | 'reset-password'>('login');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -109,18 +109,15 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleToggleFavorite = (noteId: string) => {
-    setNotes(prev => prev.map(note => {
-      if (note.id === noteId) {
-        const hasFavorite = note.tags.some(tag => tag.toLowerCase() === 'favorite');
-        const newTags = hasFavorite 
-          ? note.tags.filter(tag => tag.toLowerCase() !== 'favorite')
-          : [...note.tags, 'favorite'];
-        
-        return { ...note, tags: newTags };
-      }
-      return note;
-    }));
+  const handleToggleFavorite = async (noteId: string) => {
+    try {
+      const updatedNote = await toggleFavorite(noteId);
+      setNotes(prev => prev.map(note => 
+        note.id === noteId ? updatedNote : note
+      ));
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
   };
 
   const handleCreateNewNote = () => {
@@ -198,6 +195,16 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
+  const handleForgotPasswordSuccess = (email: string) => {
+    setIsAuthMode('reset-password');
+  };
+
+  const handleResetPasswordSuccess = () => {
+    setShowAuthDialog(false);
+    setIsAuthMode('login');
+    setAuthError('');
+  };
+
   // Use the custom hook for filtering and searching
   const { filteredNotes, stats } = useNoteFilters(notes, searchQuery, filterOptions, sortOptions);
 
@@ -218,15 +225,15 @@ const Home: React.FC = () => {
         onLogout={handleLogout}
       />
 
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <Sidebar createNewNote={handleCreateNewNote} />
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           {/* Stats Bar */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <div>
-              <h2 className="text-3xl font-semibold mb-2">Your Notes</h2>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+              <h2 className="text-2xl sm:text-3xl font-semibold mb-2">Your Notes</h2>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-500">
                 <span>
                   {isLoading ? 'Loading...' : `${stats.filteredCount} of ${stats.totalNotes} notes`}
                 </span>
@@ -239,7 +246,7 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <FilterMenu 
                 filterOptions={filterOptions}
                 onFilterChange={setFilterOptions}
@@ -266,15 +273,17 @@ const Home: React.FC = () => {
       </div>
 
              {/* Auth Dialog */}
-       <AuthDialog
-         open={showAuthDialog}
-         onOpenChange={setShowAuthDialog}
-         isAuthMode={isAuthMode}
-         setIsAuthMode={setIsAuthMode}
-         onSubmit={handleAuthSubmit}
-         isLoading={isAuthSubmitLoading}
-         error={authError}
-       />
+               <AuthDialog
+          open={showAuthDialog}
+          onOpenChange={setShowAuthDialog}
+          isAuthMode={isAuthMode}
+          setIsAuthMode={setIsAuthMode}
+          onSubmit={handleAuthSubmit}
+          onForgotPasswordSuccess={handleForgotPasswordSuccess}
+          onResetPasswordSuccess={handleResetPasswordSuccess}
+          isLoading={isAuthSubmitLoading}
+          error={authError}
+        />
     </div>
   );
 };

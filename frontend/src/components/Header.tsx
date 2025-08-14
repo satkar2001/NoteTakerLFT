@@ -58,12 +58,12 @@ const Header: React.FC<HeaderProps> = ({
   onLogout,
 }) => {
   return (
-    <nav className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
-      <div className="flex items-center space-x-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Note Taker LFT</h1>
+    <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100">
+      <div className="flex items-center space-x-4 sm:space-x-8">
+        <h1 className="text-lg sm:text-2xl font-semibold tracking-tight">Note Taker LFT</h1>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 sm:space-x-4">
         {/* Search */}
         <div className="relative hidden sm:block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -75,6 +75,18 @@ const Header: React.FC<HeaderProps> = ({
             className="pl-10 w-64 border-0 bg-gray-50 focus:bg-gray-100 transition-colors"
           />
         </div>
+        
+        {/* Mobile Search */}
+        <div className="relative sm:hidden">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 w-32 border-0 bg-gray-50 focus:bg-gray-100 transition-colors"
+          />
+        </div>
 
         {/* View Toggle */}
         <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
@@ -82,25 +94,25 @@ const Header: React.FC<HeaderProps> = ({
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('grid')}
-            className="h-8 w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
           >
-            <Grid3X3 className="h-4 w-4" />
+            <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
           <Button
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('list')}
-            className="h-8 w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all duration-200 hover:scale-105 hover:shadow-md"
           >
-            <List className="h-4 w-4" />
+            <List className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </div>
 
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">
-              <User className="h-4 w-4" />
+            <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">
+              <User className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg">

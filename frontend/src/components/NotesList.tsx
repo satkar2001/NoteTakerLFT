@@ -69,7 +69,7 @@ const NotesList: React.FC<NotesListProps> = ({
           onDelete={() => onDeleteNote(note.id)}
           onToggleFavorite={() => onToggleFavorite(note.id)}
           onClick={() => onNoteClick(note.id)}
-          isFavorite={note.tags.some(tag => tag.toLowerCase() === 'favorite')}
+                      isFavorite={note.isFavorite || false}
         />
       ))}
     </div>

@@ -8,13 +8,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import ForgotPasswordDialog from './ForgotPasswordDialog';
+import ResetPasswordDialog from './ResetPasswordDialog';
 
 interface AuthDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  isAuthMode: 'login' | 'register';
-  setIsAuthMode: (mode: 'login' | 'register') => void;
+  isAuthMode: 'login' | 'register' | 'forgot-password' | 'reset-password';
+  setIsAuthMode: (mode: 'login' | 'register' | 'forgot-password' | 'reset-password') => void;
   onSubmit: (data: { email: string; password: string; name?: string }) => Promise<void>;
+  onForgotPasswordSuccess?: (email: string) => void;
+  onResetPasswordSuccess?: () => void;
   isLoading: boolean;
   error: string;
 }
@@ -31,6 +35,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   isAuthMode,
   setIsAuthMode,
   onSubmit,
+  onForgotPasswordSuccess,
+  onResetPasswordSuccess,
   isLoading,
   error,
 }) => {
@@ -109,8 +115,30 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             </div>
           )}
           
-          {/* Form Fields */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Conditional Content */}
+          {isAuthMode === 'forgot-password' ? (
+            <ForgotPasswordDialog
+              onBack={() => setIsAuthMode('login')}
+              onSuccess={(email) => {
+                if (onForgotPasswordSuccess) {
+                  onForgotPasswordSuccess(email);
+                }
+              }}
+            />
+          ) : isAuthMode === 'reset-password' ? (
+            <ResetPasswordDialog
+              email={formData.email}
+              onBack={() => setIsAuthMode('forgot-password')}
+              onSuccess={() => {
+                if (onResetPasswordSuccess) {
+                  onResetPasswordSuccess();
+                }
+              }}
+            />
+          ) : (
+            <>
+              {/* Form Fields */}
+              <form onSubmit={handleSubmit} className="space-y-4">
             {isAuthMode === 'register' && (
               <div>
                                  <Input
@@ -173,6 +201,20 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
               )}
             </div>
             
+            {/* Forgot Password Link */}
+            {isAuthMode === 'login' && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setIsAuthMode('forgot-password')}
+                  className="text-sm text-gray-600 hover:text-black transition-colors"
+                  disabled={isLoading}
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+            
             {/* Submit Button */}
                          <Button
                type="submit"
@@ -208,6 +250,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
               {isAuthMode === 'login' ? 'Sign up' : 'Sign in'}
             </button>
           </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

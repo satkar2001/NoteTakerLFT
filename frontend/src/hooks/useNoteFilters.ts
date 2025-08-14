@@ -27,11 +27,7 @@ export const useNoteFilters = (
 
     // Apply favorites filter
     if (filterOptions.showFavorites) {
-      // For now, we'll show notes with "favorite" tag
-      // You can extend this to store favorites in localStorage or backend
-      filteredNotes = filteredNotes.filter(note =>
-        note.tags.some(tag => tag.toLowerCase().includes('favorite'))
-      );
+      filteredNotes = filteredNotes.filter(note => note.isFavorite);
     }
 
     // Apply tags filter

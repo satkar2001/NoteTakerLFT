@@ -50,12 +50,12 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange, 
         <Button
           variant="ghost"
           size="sm"
-          className="h-10 w-auto px-3 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105"
+          className="h-8 sm:h-10 w-auto px-2 sm:px-3 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105"
         >
-          <Filter className="h-4 w-4 mr-2" />
-          Filters
+          <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">Filters</span>
           {hasActiveFilters && (
-            <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span className="ml-1 sm:ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
           )}
         </Button>
       </DropdownMenuTrigger>

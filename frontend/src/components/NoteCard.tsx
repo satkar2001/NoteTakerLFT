@@ -27,7 +27,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   onDelete,
   onToggleFavorite,
   onClick,
-  isFavorite = false,
+  isFavorite = note.isFavorite || false,
 }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -48,11 +48,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
         onClick={onClick}
         className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
       >
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-xl line-clamp-1 flex-1 mr-4">
+                <h3 className="font-semibold text-lg sm:text-xl line-clamp-1 flex-1 mr-4">
                   {note.title || 'Untitled'}
                 </h3>
                 
@@ -92,7 +92,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 </div>
               </div>
 
-              <p className="text-gray-600 text-base leading-relaxed mb-4 line-clamp-2">
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
                 {note.content || 'Start writing...'}
               </p>
 
@@ -137,10 +137,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
       onClick={onClick}
       className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
     >
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div>
           <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-lg line-clamp-1 flex-1">
+            <h3 className="font-semibold text-base sm:text-lg line-clamp-1 flex-1">
               {note.title || 'Untitled'}
             </h3>
 

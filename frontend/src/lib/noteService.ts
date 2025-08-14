@@ -39,6 +39,7 @@ export interface Note {
   title: string;
   content: string;
   tags: string[];
+  isFavorite: boolean;
   createdAt: string;
   updatedAt: string;
   userId: string;
@@ -108,5 +109,10 @@ export const createLocalNote = async (data: CreateNoteData & { isLocal: boolean 
 
 export const convertLocalNotes = async (notes: CreateNoteData[]): Promise<{ message: string; notes: Note[] }> => {
   const response = await api.post('/notes/convert-local', { notes });
+  return response.data;
+};
+
+export const toggleFavorite = async (id: string): Promise<Note> => {
+  const response = await api.patch(`/notes/${id}/toggle-favorite`);
   return response.data;
 };

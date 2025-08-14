@@ -78,7 +78,7 @@ export const getNotes = async (req: Request, res: Response) => {
     }
 
     if (showFavorites) {
-      where.tags = { has: 'favorite' };
+      where.isFavorite = true;
     }
 
     // Build orderBy clause
@@ -245,5 +245,40 @@ export const convertLocalNotes = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to convert notes' });
+  }
+};
+
+// Toggle favorite status of a note
+export const toggleFavorite = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = (req as any).userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    if (!id) {
+      return res.status(400).json({ error: 'Note ID is required' });
+    }
+
+    const note = await prisma.note.findFirst({
+      where: { id, userId },
+    });
+
+    if (!note) {
+      return res.status(404).json({ error: 'Note not found or unauthorized' });
+    }
+
+    const updatedNote = await prisma.note.update({
+      where: { id },
+      data: {
+        isFavorite: !note.isFavorite,
+      },
+    });
+
+    res.json(updatedNote);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to toggle favorite status' });
   }
 };
