@@ -5,6 +5,9 @@ A minimal but featureful Full Stack web application created using React, TypeScr
 ## Demo:
 ![Demo](/frontend/public/demo.gif)
 
+## Architecture:
+
+![Architecture](/frontend/public/architecture.png)
 
 ## What It Does
 
