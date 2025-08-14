@@ -7,6 +7,7 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  isFavorite: boolean;
 }
 
 export interface LocalNote {
@@ -16,6 +17,7 @@ export interface LocalNote {
   tags: string[];
   createdAt: string;
   isLocal: true;
+  isFavorite: boolean;
 }
 
 export interface User {

@@ -20,7 +20,7 @@ const Tip: React.FC<TipProps> = ({ isLoggedIn, onSignInClick }) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
       <div className="flex items-center gap-2">
-        <Lightbulb className="h-4 w-4 text-amber-600" />
+        {/* <Lightbulb className="h-4 w-4 text-amber-600" /> */}
         <div className="flex-1">
           <p className="text-sm text-amber-700 font-medium">
             Sign in to save your notes permanently

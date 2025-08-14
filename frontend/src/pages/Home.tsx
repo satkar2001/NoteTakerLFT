@@ -187,7 +187,7 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
-  const handleForgotPasswordSuccess = (email: string) => {
+  const handleForgotPasswordSuccess = () => {
     setIsAuthMode('reset-password');
   };
 
