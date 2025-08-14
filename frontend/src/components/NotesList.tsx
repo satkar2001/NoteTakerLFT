@@ -44,11 +44,11 @@ const NotesList: React.FC<NotesListProps> = ({
         <p className="text-gray-500 mb-6 lg:mb-4 max-w-md mx-auto leading-relaxed">
           {searchQuery
             ? 'Try adjusting your search terms or filters to find what you\'re looking for.'
-            : 'Click the + icon / create new note button to create a note'}
+            : 'Create a new note by clicking on the + button'}
         </p>
         {!searchQuery && (
           <div className="text-sm text-gray-400">
-            <p> Your notes will appear here after creating them</p>
+            <p> Your notes will appear here</p>
           </div>
         )}
       </div>

@@ -56,12 +56,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
                   {note.title || 'Untitled'}
                 </h3>
                 
-                {/* Action buttons - show on hover */}
                 <div
-                  className={`flex items-center space-x-1 transition-opacity duration-200 ${
-                    isHovered ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className={`flex items-center space-x-1 transition-opacity duration-200 
+                    opacity-100 sm:${isHovered ? 'opacity-100' : 'opacity-0'}`}
                 >
+
                   <Button
                     variant="ghost"
                     size="sm"
@@ -97,7 +96,6 @@ const NoteCard: React.FC<NoteCardProps> = ({
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
-                {/* Tags */}
                 {note.tags && note.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 sm:gap-2">
                     {note.tags.map((tag, index) => (
@@ -112,7 +110,6 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 )}
 
                 <div className="flex items-center gap-2 sm:gap-3 ml-0 sm:ml-auto">
-                  {/* Local indicator */}
                   {'isLocal' in note && note.isLocal && (
                     <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
                       Local
@@ -129,7 +126,6 @@ const NoteCard: React.FC<NoteCardProps> = ({
     );
   }
 
-  // Grid view
   return (
     <Card
       onMouseEnter={onMouseEnter}
@@ -144,12 +140,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
               {note.title || 'Untitled'}
             </h3>
 
-            {/* Action buttons - show on hover */}
             <div
-              className={`flex items-center space-x-1 transition-opacity duration-200 ${
-                isHovered ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`flex items-center space-x-1 transition-opacity duration-200 
+                opacity-100 sm:${isHovered ? 'opacity-100' : 'opacity-0'}`}
             >
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -184,7 +179,6 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {note.content || 'Start writing...'}
           </p>
 
-          {/* Tags */}
           {note.tags && note.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
               {note.tags.map((tag, index) => (

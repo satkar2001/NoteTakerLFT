@@ -27,7 +27,6 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Filter options
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     showFavorites: false,
     selectedTags: []
@@ -107,10 +106,29 @@ const Home: React.FC = () => {
 
   const handleToggleFavorite = async (noteId: string) => {
     try {
-      const updatedNote = await toggleFavorite(noteId);
-      setNotes(prev => prev.map(note => 
-        note.id === noteId ? updatedNote : note
-      ));
+      if (isLoggedIn) {
+        const updatedNote = await toggleFavorite(noteId);
+        setNotes(prev => prev.map(note => 
+          note.id === noteId ? updatedNote : note
+        ));
+      } else {
+        const localNotes = getLocalNotes();
+        const noteIndex = localNotes.findIndex(note => note.id === noteId);
+        
+        if (noteIndex !== -1) {
+          const updatedLocalNotes = [...localNotes];
+          updatedLocalNotes[noteIndex] = {
+            ...updatedLocalNotes[noteIndex],
+            isFavorite: !updatedLocalNotes[noteIndex].isFavorite
+          };
+          
+          localStorage.setItem('localNotes', JSON.stringify(updatedLocalNotes));
+          
+          setNotes(prev => prev.map(note => 
+            note.id === noteId ? updatedLocalNotes[noteIndex] : note
+          ));
+        }
+      }
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
     }

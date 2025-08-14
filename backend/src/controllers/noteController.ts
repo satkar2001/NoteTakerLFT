@@ -81,11 +81,9 @@ export const getNotes = async (req: Request, res: Response) => {
       where.isFavorite = true;
     }
 
-    // Build orderBy clause
     const orderBy: any = {};
     orderBy[sortBy] = sortOrder;
 
-    // Get notes with pagination
     const [notes, totalCount] = await Promise.all([
       prisma.note.findMany({
         where,
@@ -114,7 +112,6 @@ export const getNotes = async (req: Request, res: Response) => {
   }
 };
 
-// Get a single note by ID
 export const getNoteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -142,7 +139,6 @@ export const getNoteById = async (req: Request, res: Response) => {
   }
 };
 
-// Update a note
 export const updateNote = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -180,7 +176,6 @@ export const updateNote = async (req: Request, res: Response) => {
   }
 };
 
-// Delete a note
 export const deleteNote = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -212,7 +207,6 @@ export const deleteNote = async (req: Request, res: Response) => {
   }
 };
 
-// Convert local notes to permanent notes
 export const convertLocalNotes = async (req: Request, res: Response) => {
   try {
     const { notes } = req.body;
@@ -248,7 +242,6 @@ export const convertLocalNotes = async (req: Request, res: Response) => {
   }
 };
 
-// Toggle favorite status of a note
 export const toggleFavorite = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
