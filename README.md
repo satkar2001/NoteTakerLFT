@@ -3,7 +3,7 @@
 A minimal but featureful Full Stack web application created using React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean interface.
 
 ##demo:
-![Demo](demo.gif)
+![Demo](/frontend/public/demo.gif)
 
 
 ## What It Does
