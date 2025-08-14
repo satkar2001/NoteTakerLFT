@@ -225,34 +225,36 @@ const Home: React.FC = () => {
           stats={stats}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8">
           {/* Stats Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-semibold mb-2">Your Notes</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 lg:mb-8 space-y-4 sm:space-y-0">
+            <div className="space-y-2">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900">Your Notes</h2>
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-500">
-                <span>
+                <span className="text-sm sm:text-base">
                   {isLoading ? 'Loading...' : `${stats.filteredCount} of ${stats.totalNotes} notes`}
                 </span>
                 {!isLoggedIn && stats.localNotes > 0 && (
-                  <span className="text-amber-600">({stats.localNotes} saved locally)</span>
+                  <span className="text-amber-600 text-xs sm:text-sm">({stats.localNotes} saved locally)</span>
                 )}
                 {stats.hasFilters && (
-                  <span className="text-blue-600">(filtered)</span>
+                  <span className="text-blue-600 text-xs sm:text-sm">(filtered)</span>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FilterMenu 
-                filterOptions={filterOptions}
-                onFilterChange={setFilterOptions}
-                availableTags={stats.availableTags}
-              />
-              <SortButton
-                sortOptions={sortOptions}
-                onSortChange={setSortOptions}
-              />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <FilterMenu 
+                  filterOptions={filterOptions}
+                  onFilterChange={setFilterOptions}
+                  availableTags={stats.availableTags}
+                />
+                <SortButton
+                  sortOptions={sortOptions}
+                  onSortChange={setSortOptions}
+                />
+              </div>
               <Tip isLoggedIn={isLoggedIn} onSignInClick={handleSignInClick} />
             </div>
           </div>

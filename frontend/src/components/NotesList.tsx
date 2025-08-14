@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, FileText } from 'lucide-react';
 import NoteCard from './NoteCard';
 import type { Note, LocalNote, ViewMode } from '@/types';
 
@@ -36,23 +36,28 @@ const NotesList: React.FC<NotesListProps> = ({
 
   if (notes.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Plus className="h-8 w-8 text-gray-400" />
+      <div className="text-center py-16 px-4">
+        <div className="w-20 h-20 lg:w-16 lg:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 lg:mb-4">
+          <FileText className="h-10 w-10 lg:h-8 lg:w-8 text-gray-400" />
         </div>
-        <h3 className="text-lg font-semibold mb-2">No notes found</h3>
-        <p className="text-gray-500 mb-4">
+        <h3 className="text-xl lg:text-lg font-semibold mb-3 lg:mb-2 text-gray-800">No notes found</h3>
+        <p className="text-gray-500 mb-6 lg:mb-4 max-w-md mx-auto leading-relaxed">
           {searchQuery
-            ? 'Try adjusting your search.'
-            : 'Create your first note to get started.'}
+            ? 'Try adjusting your search terms or filters to find what you\'re looking for.'
+            : 'Start your note-taking journey by creating your first note. Click the "Create New Note" button above to get started.'}
         </p>
+        {!searchQuery && (
+          <div className="text-sm text-gray-400">
+            <p>💡 Your notes will appear here once you create them</p>
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div
-      className={`grid gap-6 ${
+      className={`grid gap-4 lg:gap-6 ${
         viewMode === 'grid'
           ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
           : 'grid-cols-1 max-w-4xl'
@@ -69,7 +74,7 @@ const NotesList: React.FC<NotesListProps> = ({
           onDelete={() => onDeleteNote(note.id)}
           onToggleFavorite={() => onToggleFavorite(note.id)}
           onClick={() => onNoteClick(note.id)}
-                      isFavorite={note.isFavorite || false}
+          isFavorite={note.isFavorite || false}
         />
       ))}
     </div>

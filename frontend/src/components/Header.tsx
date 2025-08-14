@@ -58,33 +58,33 @@ const Header: React.FC<HeaderProps> = ({
   onLogout,
 }) => {
   return (
-    <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100">
-      <div className="flex items-center space-x-4 sm:space-x-8">
-        <h1 className="text-lg sm:text-2xl font-semibold tracking-tight">Note Taker LFT</h1>
+    <nav className="flex items-center justify-between px-3 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 border-b border-gray-100">
+      <div className="flex items-center space-x-3 sm:space-x-4 lg:space-x-8">
+        <h1 className="text-base sm:text-lg lg:text-2xl font-semibold tracking-tight text-gray-900">Note Taker LFT</h1>
       </div>
 
-      <div className="flex items-center space-x-2 sm:space-x-4">
-        {/* Search */}
-        <div className="relative hidden sm:block">
+      <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+        {/* Search - Desktop */}
+        <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             type="text"
             placeholder="Search notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 w-64 border-0 bg-gray-50 focus:bg-gray-100 transition-colors"
+            className="pl-10 w-48 lg:w-64 border-0 bg-gray-50 focus:bg-gray-100 transition-colors"
           />
         </div>
         
-        {/* Mobile Search */}
-        <div className="relative sm:hidden">
+        {/* Search - Mobile */}
+        <div className="relative md:hidden">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 w-32 border-0 bg-gray-50 focus:bg-gray-100 transition-colors"
+            className="pl-10 w-28 sm:w-32 border-0 bg-gray-50 focus:bg-gray-100 transition-colors text-sm"
           />
         </div>
 
@@ -111,8 +111,8 @@ const Header: React.FC<HeaderProps> = ({
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">
-              <User className="h-3 w-3 sm:h-4 sm:w-4" />
+            <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">
+              <User className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg">

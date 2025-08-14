@@ -19,12 +19,13 @@
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-
     "lucide-react": "^0.539.0",
     "ngrok": "5.0.0-beta.2",
+    "nodemailer": "^7.0.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.0",
+    "resend": "^6.0.1",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {

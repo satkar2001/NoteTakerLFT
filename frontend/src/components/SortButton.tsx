@@ -36,9 +36,9 @@ const SortButton: React.FC<SortButtonProps> = ({ sortOptions, onSortChange }) =>
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 sm:h-10 w-auto px-2 sm:px-3 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105"
+          className="h-9 sm:h-10 w-auto px-3 sm:px-3 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105 text-sm"
         >
-          <ArrowUpDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <ArrowUpDown className="h-4 w-4 mr-2" />
           <span className="hidden sm:inline">Sort</span>
         </Button>
       </DropdownMenuTrigger>

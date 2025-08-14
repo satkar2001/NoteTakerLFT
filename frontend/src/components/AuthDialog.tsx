@@ -93,12 +93,12 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white">
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-bold text-black">
+      <DialogContent className="w-[95vw] max-w-md mx-auto bg-white p-4 sm:p-6">
+        <DialogHeader className="text-center mb-4 sm:mb-6">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-black">
             {isAuthMode === 'login' ? 'Welcome back' : 'Create your account'}
           </DialogTitle>
-          <DialogDescription className="text-gray-600 mt-2">
+          <DialogDescription className="text-sm sm:text-base text-gray-600 mt-2">
             {isAuthMode === 'login' 
               ? 'Sign in to access your notes' 
               : 'Get started with your note-taking journey'

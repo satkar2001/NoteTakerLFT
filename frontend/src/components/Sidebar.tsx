@@ -10,19 +10,18 @@ interface SidebarProps {
   stats?: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ createNewNote }) => {
+const Sidebar: React.FC<SidebarProps> = ({ createNewNote, isLoggedIn }) => {
   return (
     <aside className="w-full lg:w-16 lg:mt-4 lg:border-r lg:border-gray-100 bg-gray-50/30 p-4 lg:p-4 flex lg:flex-col items-center justify-center lg:justify-start space-y-0 lg:space-y-4 space-x-4 lg:space-x-0">
+      {/* Mobile: Full-width button, Desktop: Circular button */}
       <Button
         onClick={createNewNote}
         size="sm"
-        className="h-10 w-10 rounded-full bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200"
+        className="w-full lg:w-10 h-12 lg:h-10 rounded-lg lg:rounded-full bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 font-medium lg:font-normal"
       >
-        <Plus className="h-5 w-5" />
+        <Plus className="h-5 w-5 mr-2 lg:mr-0" />
+        <span className="lg:hidden">Create New Note</span>
       </Button>
-      
-      {/* <div className="w-px h-8 bg-gray-200"></div> */}
-      
     </aside>
   );
 };

@@ -48,11 +48,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
         onClick={onClick}
         className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
       >
-        <CardContent className="p-4 sm:p-6">
+        <CardContent className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-lg sm:text-xl line-clamp-1 flex-1 mr-4">
+              <div className="flex items-start justify-between mb-2 sm:mb-3">
+                <h3 className="font-semibold text-base sm:text-lg lg:text-xl line-clamp-1 flex-1 mr-3 sm:mr-4">
                   {note.title || 'Untitled'}
                 </h3>
                 
@@ -65,19 +65,19 @@ const NoteCard: React.FC<NoteCardProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete();
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                   
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-8 w-8 p-0 transition-colors ${
+                    className={`h-7 w-7 sm:h-8 sm:w-8 p-0 transition-colors ${
                       isFavorite 
                         ? 'text-red-500 hover:bg-red-50' 
                         : 'text-gray-400 hover:bg-red-50 hover:text-red-500'
@@ -87,23 +87,23 @@ const NoteCard: React.FC<NoteCardProps> = ({
                       onToggleFavorite();
                     }}
                   >
-                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                    <Heart className={`h-3 w-3 sm:h-4 sm:w-4 ${isFavorite ? 'fill-current' : ''}`} />
                   </Button>
                 </div>
               </div>
 
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-3 sm:mb-4 line-clamp-2">
                 {note.content || 'Start writing...'}
               </p>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                 {/* Tags */}
                 {note.tags && note.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
                     {note.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors"
+                        className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-100 text-gray-700 text-xs sm:text-sm rounded-full hover:bg-gray-200 transition-colors"
                       >
                         {tag}
                       </span>
@@ -111,7 +111,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 ml-auto">
+                <div className="flex items-center gap-2 sm:gap-3 ml-0 sm:ml-auto">
                   {/* Local indicator */}
                   {'isLocal' in note && note.isLocal && (
                     <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
@@ -119,7 +119,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
                     </span>
                   )}
                   
-                  <span className="text-sm text-gray-400">{formatDate(note.createdAt)}</span>
+                  <span className="text-xs sm:text-sm text-gray-400">{formatDate(note.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -137,10 +137,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
       onClick={onClick}
       className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 border-0 shadow-md bg-white hover:bg-gray-50"
     >
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className="p-3 sm:p-4 lg:p-6">
         <div>
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-base sm:text-lg line-clamp-1 flex-1">
+          <div className="flex items-start justify-between mb-2 sm:mb-3">
+            <h3 className="font-semibold text-sm sm:text-base lg:text-lg line-clamp-1 flex-1">
               {note.title || 'Untitled'}
             </h3>
 
@@ -153,19 +153,19 @@ const NoteCard: React.FC<NoteCardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
+                className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete();
                 }}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
-                className={`h-8 w-8 p-0 transition-colors ${
+                className={`h-6 w-6 sm:h-8 sm:w-8 p-0 transition-colors ${
                   isFavorite 
                     ? 'text-red-500 hover:bg-red-50' 
                     : 'text-gray-400 hover:bg-red-50 hover:text-red-500'
@@ -175,12 +175,12 @@ const NoteCard: React.FC<NoteCardProps> = ({
                   onToggleFavorite();
                 }}
               >
-                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                <Heart className={`h-3 w-3 sm:h-4 sm:w-4 ${isFavorite ? 'fill-current' : ''}`} />
               </Button>
             </div>
           </div>
 
-          <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3">
             {note.content || 'Start writing...'}
           </p>
 
@@ -198,10 +198,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
             </div>
           )}
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
             <span className="text-xs text-gray-400">{formatDate(note.createdAt)}</span>
             {'isLocal' in note && note.isLocal && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
+              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full self-start sm:self-auto">
                 Local
               </span>
             )}
