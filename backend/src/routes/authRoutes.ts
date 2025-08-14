@@ -1,5 +1,5 @@
-import express, { type Router, type Request, type Response } from 'express';
-import { register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
+import express, { type Router } from 'express';
+import { register, login, forgotPassword, resetPassword, debugOTP } from '../controllers/authController.js';
 import { validateUser, validateLogin } from '../middleware/validationMiddleware.js';
 
 const router: Router = express.Router();
@@ -177,5 +177,8 @@ router.post('/forgot-password', forgotPassword);
  *         description: Server error
  */
 router.post('/reset-password', resetPassword);
+
+// Debug route (remove in production)
+router.get('/debug-otp/:email', debugOTP);
 
 export default router;
