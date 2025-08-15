@@ -34,8 +34,8 @@ The best part? You don't need to sign up to start using it. Your notes are saved
 - Searching across notes by title, content and tags.
 - Sort notes by various criteria including date, updated time and alphabetical order.
 
-**Offline Capability**
-- Local storage integration to save notes without logging in.
+**Note saving**
+- Local storage integration to allow saving notes without logging in.
 
 **User Experience**
 - Responsive design built with Tailwind CSS and shadcn/ui components
