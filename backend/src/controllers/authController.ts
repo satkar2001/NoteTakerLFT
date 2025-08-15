@@ -137,75 +137,28 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-// export const resetPassword = async (req: Request, res: Response) => {
-//   try {
-//     const { email, otp, newPassword } = req.body;
-
-//     // Find user with valid OTP
-//     const user = await prisma.user.findFirst({
-//       where: {
-//         email,
-//         resetToken: otp,
-//         resetTokenExpiry: {
-//           gt: new Date()
-//         }
-//       }
-//     });
-
-//     if (!user) {
-//       return res.status(400).json({ error: 'Invalid or expired OTP' });
-//     }
-
-//     // Hash new password
-//     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-//     await prisma.user.update({
-//       where: { email },
-//       data: {
-//         password: hashedPassword,
-//         resetToken: null,
-//         resetTokenExpiry: null
-//       }
-//     });
-
-//     res.json({ message: 'Password reset successfully' });
-//   } catch (err) {
-//     console.error('Reset password error:', err);
-//     res.status(500).json({ error: 'Failed to reset password' });
-//   }
-// };
-
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email, otp, newPassword } = req.body;
 
-    // Fetch the user regardless of expiry for debugging
-    const user = await prisma.user.findUnique({
-      where: { email }
+    // Find user with valid OTP
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+        resetToken: otp,
+        resetTokenExpiry: {
+          gt: new Date()
+        }
+      }
     });
 
     if (!user) {
-      console.log(`[DEBUG] No user found for email: ${email}`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    console.log(`[DEBUG] Stored OTP: "${user.resetToken}" | Received OTP: "${otp}"`);
-    console.log(`[DEBUG] Stored expiry: ${user.resetTokenExpiry} | Current time: ${new Date()}`);
-
-    // Check for OTP mismatch first
-    if (String(user.resetToken).trim() !== String(otp).trim()) {
-      return res.status(400).json({ error: 'OTP mismatch', debug: { stored: user.resetToken, received: otp } });
-    }
-
-    // Check expiry
-    if (!user.resetTokenExpiry || new Date(user.resetTokenExpiry) <= new Date()) {
-      return res.status(400).json({ error: 'OTP expired', debug: { expiry: user.resetTokenExpiry, now: new Date() } });
+      return res.status(400).json({ error: 'Invalid or expired OTP' });
     }
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update password and clear OTP
     await prisma.user.update({
       where: { email },
       data: {
@@ -217,8 +170,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     res.json({ message: 'Password reset successfully' });
   } catch (err) {
-    console.error('[DEBUG] Reset password error:', err);
-    res.status(500).json({ error: 'Failed to reset password', details: err instanceof Error ? err.message : 'Unknown error' });
+    console.error('Reset password error:', err);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 };
-
