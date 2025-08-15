@@ -5,6 +5,7 @@ A minimal but feature-rich and elegant full-stack note taking application that h
 ## Live Demo
 
 ![Demo](/frontend/public/Notedemo.gif)
+please wait for the gif to load..
 
 **Try it live:** https://notetaker-frontend.onrender.com/
 
