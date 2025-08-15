@@ -6,9 +6,9 @@ A minimal but feature-rich and elegant full-stack note-taking application that h
 
 ![Demo](/frontend/public/demo.gif)
 
-**Try it live:** https://notetaker-backend-jpgb.onrender.com
+**Try it live:** https://notetaker-frontend.onrender.com/
 
-**API Documentation:** https://notetaker-backend-jpgb.onrender.com/api-docs/
+**API Documentation:** https://notetaker-backend-jpgb.onrender.com/api-docs/#/
 
 ## What This App Does
 
