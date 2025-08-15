@@ -118,7 +118,6 @@ The codebase is organized into two main parts:
 
 **Frontend**
 - React components organized by feature and reusability
-- Hooks for state management and API calls
 - TypeScript interfaces and types for type safety
 - Utility functions for common operations
 
