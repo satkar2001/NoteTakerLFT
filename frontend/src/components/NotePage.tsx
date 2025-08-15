@@ -197,7 +197,7 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
           <div>
             <Input
               type="text"
-              placeholder="Tags (comma separated)..."
+              placeholder="Categories/Tags (Keep them comma separated)"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               className="border-gray-200"

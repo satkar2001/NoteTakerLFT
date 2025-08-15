@@ -52,7 +52,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
 
-    // Email validation
     if (!formData.email) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -61,8 +60,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
 
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters long';
+    } else if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/.test(formData.password)) {
+      errors.password = 'Password must be at least 6 characters long, include a number and a special character';
     }
 
     if (isAuthMode === 'register' && !formData.name.trim()) {
@@ -159,7 +158,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             )}
             
             <div>
-                             <Input
+              <Input
                  type="email"
                  placeholder="Email address"
                  value={formData.email}
@@ -179,7 +178,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             </div>
             
             <div>
-                             <Input
+              <Input
                  type="password"
                  placeholder="Password"
                  value={formData.password}
@@ -212,7 +211,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
                </div>
              )}
              
-                         <Button
+            <Button
                type="submit"
                disabled={isLoading}
                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-medium"
@@ -226,7 +225,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
                 isAuthMode === 'login' ? 'Sign in' : 'Create account'
               )}
             </Button>
-                     </form>
+            </form>
            
            <div className="text-center text-sm">
             <span className="text-gray-500">

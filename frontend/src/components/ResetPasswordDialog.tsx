@@ -41,12 +41,13 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
+    
+    if (!/^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/.test(newPassword)) {
+      setError('Password must be at least 6 characters long, include a number and a special character');
       setIsLoading(false);
       return;
     }
-
+    
     if (!otp || otp.trim().length !== 6) {
       setError('Please enter a valid 6-digit OTP');
       setIsLoading(false);
