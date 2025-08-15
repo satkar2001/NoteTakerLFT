@@ -1,6 +1,6 @@
 # NoteTakerLFT
 
-A modern full-stack note-taking application that helps you capture, organize, and manage your thoughts with a clean and intuitive interface. Built with React, TypeScript, and Node.js, this app provides both online and offline note-taking capabilities.
+A minimal but feature-rich and elegant full-stack note-taking application that helps you create, organize, and manage your notes with a clean and intuitive interface. Built with React, TypeScript, and Node.js(Express).
 
 ## Live Demo
 
@@ -12,54 +12,44 @@ A modern full-stack note-taking application that helps you capture, organize, an
 
 ## What This App Does
 
-NoteTakerLFT is designed to be your personal digital notebook that works everywhere. You can create and edit notes even without an internet connection, and when you sign up for an account, all your notes sync seamlessly across your devices. The app automatically saves your work as you type, so you never lose your thoughts.
-
-Whether you're jotting down quick ideas, writing detailed project plans, or organizing your daily tasks, this app adapts to your workflow with powerful search capabilities and flexible organization features.
+NoteTakerLFT is a personal notetaking application that you can use on any platform(Mobile/PC). You can create, edit, save, and organize your notes by favorites , categories etc and also sort them according to created date, albhabetical order etc.
+The best part? You don't need to sign up to start using it. Your notes are saved in your browser until you clear the cache. When you do create an account later, all your previous notes will automatically transfer over and be saved permanently so you never lose anything you've written.
 
 ## Key Features
 
 **User Authentication & Account Management**
 - Secure user registration and login using JWT tokens and bcrypt password hashing
 - Password reset functionality with email-based OTP verification using Nodemailer
-- Google OAuth integration for quick sign-in
-- User profile management with customizable settings
 
 **Note Creation & Management**
-- Rich text editor powered by TipTap with formatting options like bold, italic, headers, and lists
-- Auto-save functionality that saves your work as you type
-- Drag-and-drop note organization with intuitive controls
-- Note tagging system for better categorization
+- Simple text editor 
+- Note tagging/category system for categorization
 
 **Search & Discovery**
-- Real-time search across all notes using fuzzy matching algorithms
-- Advanced filtering options by tags, favorites, and creation date
-- Sort notes by various criteria including date, alphabetical, and custom order
-- Quick access to recently edited notes
+- Searching across notes by title, content and tags.
+- Sort notes by various criteria including date, updated time and alphabetical order.
 
 **Offline Capability**
-- Local storage integration that works without internet connection
-- Automatic sync when you go online and create an account
-- Progressive Web App (PWA) features for mobile installation
-- Seamless transition between offline and online modes
+- Local storage integration to save notes without logging in.
 
 **User Experience**
 - Responsive design built with Tailwind CSS and shadcn/ui components
-- Dark and light theme support with system preference detection
-- Mobile-first design that works perfectly on phones, tablets, and desktops
-- Keyboard shortcuts for power users
+
+**Logging**
+- logging feature implemented for backend logs using app.log file for local and on render console after deployment. 
 
 **Technical Features**
-- RESTful API design with comprehensive Swagger documentation
-- PostgreSQL database with Prisma ORM for reliable data management
-- Email service integration supporting both Gmail and Resend
+- RESTful API design with Swagger documentation
+- PostgreSQL database with Prisma ORM 
+- Email service integration supporting Gmail
 - Comprehensive error handling and logging throughout the application
-- Type-safe development with TypeScript on both frontend and backend
+- Type safe development with TypeScript on both frontend and backend
 
 ## Technical Architecture
 
 ![Architecture](/frontend/public/architecture.png)
 
-The application follows a modern full-stack architecture with clear separation of concerns. The frontend is a React single-page application that communicates with a Node.js REST API. User data is stored in PostgreSQL, with local browser storage providing offline functionality.
+The application follows a full-stack architecture. The frontend is a single page React application that communicates with a Node.js backend. User data is stored in PostgreSQL, and localStorage is also used for offline note saving etc.
 
 **Frontend Stack:**
 - React 18 with TypeScript for type-safe component development
@@ -84,23 +74,19 @@ The application follows a modern full-stack architecture with clear separation o
 
 Before setting up the application, you'll need:
 
-- Node.js 18 or higher
+- Node.js 18+
 - npm or pnpm package manager
-- PostgreSQL database (local or cloud-hosted like Supabase, Railway, or Neon)
+- PostgreSQL database (local or hosted)
 
 ### Required Accounts & API Keys
 
 To run the full application, you'll need to set up:
 
 **Database:**
-- PostgreSQL database URL (you can use free tiers from Supabase, Railway, or Neon)
+- PostgreSQL database URL (you can setup using PGAdmin on local machine)
 
 **Email Service (for password reset):**
-- Gmail account with App Password enabled, OR
-- Resend account with API key
-
-**Optional:**
-- Google OAuth credentials for social login
+- Gmail account with App Password from gmail settings.
 
 ### Installation
 
@@ -125,30 +111,21 @@ npm install
 
 The codebase is organized into two main parts:
 
-**Frontend (`/frontend`)**
+**Frontend**
 - React components organized by feature and reusability
-- Custom hooks for state management and API calls
+- Hooks for state management and API calls
 - TypeScript interfaces and types for type safety
 - Utility functions for common operations
 
-**Backend (`/backend`)**
+**Backend **
 - Express routes organized by feature areas
 - Database models and Prisma schema definitions
-- Authentication middleware and security utilities
-- Email services and external integrations
+- Authentication middleware
+- External integrations
 
-**Shared Configuration**
-- Workspace configuration for monorepo management
-- Shared development tools and linting rules
-- Documentation and deployment configurations
+## Workflow
 
-## Development Workflow
+This project uses a monorepo structure which means both frontend and backend are inside the same repo though they are deployed differently. You can run commands for both frontend and backend from the root directory, or work on each part independently.
+The application includes logging and error handling to help with debugging during development. API endpoints are thoroughly documented with Swagger, making it easy to understand and test the backend functionality.
 
-This project uses a monorepo structure with npm workspaces. You can run commands for both frontend and backend from the root directory, or work on each part independently. The development servers support hot reloading, so changes are reflected immediately as you code.
-
-The application includes comprehensive logging and error handling to help with debugging during development. API endpoints are thoroughly documented with Swagger, making it easy to understand and test the backend functionality.
-
-## Contributing
-
-Feel free to contribute to this project by submitting issues, feature requests, or pull requests. The codebase follows modern development practices with TypeScript for type safety, ESLint for code quality, and clear component organization.
 
