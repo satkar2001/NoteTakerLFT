@@ -129,9 +129,4 @@ The codebase is organized into two main parts:
 - Authentication middleware
 - External integrations
 
-## Workflow
-
-This project uses a monorepo structure which means both frontend and backend are inside the same repo though they are deployed differently. You can run commands for both frontend and backend from the root directory, or work on each part independently.
-The application includes logging and error handling to help with debugging during development. API endpoints are thoroughly documented with Swagger, making it easy to understand and test the backend functionality.
-
 
