@@ -2,6 +2,22 @@
 
 A minimal but featureful Full Stack web application created using React, TypeScript, and Node.js that helps you create, organize, and manage your notes with a clean interface.
 
+## Demo:
+![Demo](/frontend/public/demo.gif)
+
+## Architecture:
+
+![Architecture](/frontend/public/architecture.png)
+
+Created Using eraser.io 
+
+## Swagger API Documentation: 
+
+![Swagger](/frontend/public/swagger.png)
+
+
+Link:https://notetaker-backend-jpgb.onrender.com/api-docs/
+
 ## What It Does
 
 This app lets you create and manage notes with user authentication and real-time synchronization. You can write, edit, and organize your notes while they sync to your account when you're logged in , so that you can access it on any of your devices.
