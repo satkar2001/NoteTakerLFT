@@ -16,7 +16,7 @@ A minimal but feature-rich and elegant full-stack note taking application that h
 ![Mobileview](/frontend/public/mobileview.png)
 
 
-## What This App Does
+## Introduction
 
 NoteTakerLFT is a personal notetaking application that you can use on any platform(Mobile/PC). You can create, edit, save, and organize your notes by favorites , categories etc and also sort them according to created date, albhabetical order etc.
 The best part is that don't need to sign up to start using it. Your notes are saved in your browser until you clear the cache. When you do create an account later, all your previous notes will automatically transfer over and be saved permanently so you never lose the notes you've written.
