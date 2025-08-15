@@ -122,7 +122,7 @@ The codebase is organized into two main parts:
 - TypeScript interfaces and types for type safety
 - Utility functions for common operations
 
-**Backend **
+**Backend**
 - Express routes organized by feature areas
 - Database models and Prisma schema definitions
 - Authentication middleware
