@@ -24,7 +24,6 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Middleware
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' })); 
 app.use(express.urlencoded({ extended: true }));
@@ -47,7 +46,7 @@ app.use('/api/notes', noteRoutes);
 
 app.get('/health', async (req: Request, res: Response) => {
   try {
-    // Test database connection
+    // database conn check
     await prisma.$queryRaw`SELECT 1`;
     
     res.json({ 

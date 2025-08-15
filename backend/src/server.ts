@@ -3,7 +3,6 @@ import { testEmailService } from './utils/emailService.js';
 
 const PORT = process.env.PORT || 10000;
 
-// Test email service on startup
 testEmailService().then(isConfigured => {
   if (isConfigured) {
     console.log('Email service ready');

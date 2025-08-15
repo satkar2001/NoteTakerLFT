@@ -45,7 +45,7 @@ export const deleteLocalNote = (id: string): boolean => {
   const filteredNotes = localNotes.filter(note => note.id !== id);
   
   if (filteredNotes.length === localNotes.length) {
-    return false; // Note not found
+    return false; 
   }
   
   localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(filteredNotes));

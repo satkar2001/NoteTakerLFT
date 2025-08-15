@@ -1,26 +1,4 @@
-// import { Grid, List, User } from "lucide-react";
 
-// export function Header() {
-//   return (
-//     <header className="flex justify-between items-center px-6 py-4 border-b">
-//       <h1 className="text-2xl font-bold">Notes</h1>
-//       <div className="flex items-center gap-3">
-//         <button className="p-2 rounded-lg bg-black text-white">
-//           <Grid className="w-5 h-5" />
-//         </button>
-//         <button className="p-2 rounded-lg border">
-//           <List className="w-5 h-5" />
-//         </button>
-//         <button className="p-2 rounded-lg border">
-//           <User className="w-5 h-5" />
-//         </button>
-//       </div>
-//     </header>
-//   );
-// }
-
-
-// components/Header.tsx
 import React from 'react';
 import { Search, User, LogOut, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';

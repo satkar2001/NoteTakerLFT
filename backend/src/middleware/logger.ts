@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
 
-// Log levels
 export enum LogLevel {
   ERROR = 'ERROR',
   WARN = 'WARN',
@@ -10,7 +9,7 @@ export enum LogLevel {
   DEBUG = 'DEBUG'
 }
 
-// Logger class
+// loggers class
 export class Logger {
   private logFile: string;
 
@@ -63,10 +62,8 @@ export class Logger {
   }
 }
 
-// Create logger instance
 export const logger = new Logger();
 
-// Request logging middleware
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
   

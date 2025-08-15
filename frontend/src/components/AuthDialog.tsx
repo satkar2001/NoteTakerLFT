@@ -59,14 +59,12 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
       errors.email = 'Please enter a valid email address';
     }
 
-    // Password validation
     if (!formData.password) {
       errors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       errors.password = 'Password must be at least 6 characters long';
     }
 
-    // Name validation for register mode
     if (isAuthMode === 'register' && !formData.name.trim()) {
       errors.name = 'Name is required';
     }
@@ -202,7 +200,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
               )}
             </div>
             
-                         {/* Forgot Password Link */}
+                         
              {isAuthMode === 'login' && (
                <div className="text-right">
                  <button
@@ -216,7 +214,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
                </div>
              )}
              
-             {/* Submit Button */}
                          <Button
                type="submit"
                disabled={isLoading}
@@ -233,7 +230,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             </Button>
                      </form>
            
-           {/* Toggle Mode */}
            <div className="text-center text-sm">
             <span className="text-gray-500">
               {isAuthMode === 'login' ? "Don't have an account? " : "Already have an account? "}

@@ -13,11 +13,9 @@ export const googleAuth = async (req: Request, res: Response) => {
   try {
     const { code } = req.body;
     
-    // Exchange code for tokens
     const { tokens } = await client.getToken(code);
     client.setCredentials(tokens);
     
-    // Get user info
     const googleClientId = process.env.GOOGLE_CLIENT_ID;
     if (!googleClientId) {
       return res.status(500).json({ error: 'Google client ID not configured' });
@@ -39,7 +37,6 @@ export const googleAuth = async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'Email not provided by Google' });
     }
     
-    // Find or create user
     let user = await prisma.user.findUnique({
       where: { email }
     });
@@ -54,7 +51,6 @@ export const googleAuth = async (req: Request, res: Response) => {
         }
       });
     } else if (!user.googleId) {
-      // Link existing account
       user = await prisma.user.update({
         where: { email },
         data: { 
@@ -64,7 +60,7 @@ export const googleAuth = async (req: Request, res: Response) => {
       });
     }
     
-    // Generate JWT token
+    // gen JWT token
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       return res.status(500).json({ error: 'JWT secret not configured' });

@@ -27,7 +27,6 @@ export const errorHandler = (
   let error = { ...err };
   error.message = err.message;
 
-  // Log error
   console.error('Error:', {
     message: err.message,
     stack: err.stack,
@@ -37,25 +36,21 @@ export const errorHandler = (
     user: (req as any).userId || 'unauthenticated'
   });
 
-  // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     const message = 'Resource not found';
     error = new CustomError(message, 404);
   }
 
-  // Mongoose duplicate key
   if (err.name === 'MongoError' && (err as any).code === 11000) {
     const message = 'Duplicate field value entered';
     error = new CustomError(message, 400);
   }
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values((err as any).errors).map((val: any) => val.message);
     error = new CustomError(message.join(', '), 400);
   }
 
-  // JWT errors
   if (err.name === 'JsonWebTokenError') {
     const message = 'Invalid token';
     error = new CustomError(message, 401);

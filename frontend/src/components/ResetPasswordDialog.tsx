@@ -23,7 +23,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading) return; // Prevent double submission
+    if (isLoading) return; 
     
     setIsLoading(true);
     setError('');

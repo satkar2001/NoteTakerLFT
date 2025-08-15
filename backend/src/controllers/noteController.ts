@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prismaClient.js';
 
-// Create a new note (can be used by both authenticated and unauthenticated users)
 export const createNote = async (req: Request, res: Response) => {
   try {
     const { title, content, tags, isLocal } = req.body;
     
-    // If it's a local note (before signup), just return success
     if (isLocal) {
       return res.status(201).json({ 
         id: `local_${Date.now()}`,
@@ -18,7 +16,6 @@ export const createNote = async (req: Request, res: Response) => {
       });
     }
 
-    // For authenticated users, save to database
     const userId = (req as any).userId;
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
@@ -39,7 +36,6 @@ export const createNote = async (req: Request, res: Response) => {
   }
 };
 
-// Get all notes for the logged-in user with pagination and filtering
 export const getNotes = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
@@ -47,21 +43,17 @@ export const getNotes = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Pagination parameters
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const skip = (page - 1) * limit;
 
-    // Filtering parameters
     const search = req.query.search as string;
     const tags = req.query.tags as string;
     const showFavorites = req.query.favorites === 'true';
 
-    // Sorting parameters
     const sortBy = req.query.sortBy as string || 'createdAt';
     const sortOrder = req.query.sortOrder as string || 'desc';
 
-    // Build where clause
     const where: any = { userId };
 
     if (search) {

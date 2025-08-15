@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
-// Validation schemas
 const userSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -19,7 +18,6 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required')
 });
 
-// Validation middleware functions
 export const validateUser = (req: Request, res: Response, next: NextFunction) => {
   try {
     userSchema.parse(req.body);
