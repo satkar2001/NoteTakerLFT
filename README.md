@@ -113,8 +113,6 @@ npm install
    - **Backend setup:** See `backend/README.md` for environment variables and database configuration
    - **Frontend setup:** See `frontend/README.md` for environment configuration
 
-4. Both README files contain step-by-step instructions for setting up the development environment, configuring environment variables, and running the application locally.
-
 ## Project Structure
 
 The codebase is organized into two main parts:
