@@ -54,6 +54,8 @@ The best part? You don't need to sign up to start using it. Your notes are saved
 
 ![Architecture](/frontend/public/architecture.png)
 
+The diagram was created using eraser.io . Visit my workspace :https://app.eraser.io/workspace/KLlaKIo1nF7zZjHwTJC6?origin=share 
+
 The application follows a full-stack architecture. The frontend is a single page React application that communicates with a Node.js backend. User data is stored in PostgreSQL, and localStorage is also used for offline note saving etc.
 
 **Frontend Stack:**
