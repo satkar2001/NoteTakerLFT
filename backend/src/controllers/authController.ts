@@ -113,6 +113,12 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Check if there's already a recent OTP request (within last 30 seconds)
+    if (user.resetTokenExpiry && user.resetTokenExpiry > new Date(Date.now() - 30 * 1000)) {
+      console.log('Recent OTP already exists for:', email);
+      return res.json({ message: 'Reset email sent successfully' });
+    }
+
     // Generate OTP
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes

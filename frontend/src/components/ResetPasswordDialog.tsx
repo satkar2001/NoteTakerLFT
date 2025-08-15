@@ -22,9 +22,18 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isLoading) return; // Prevent double submission
+    
     setIsLoading(true);
     setError('');
     setMessage('');
+
+    if (!email) {
+      setError('Email is required. Please go back and try again.');
+      setIsLoading(false);
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
@@ -38,7 +47,14 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
       return;
     }
 
+    if (!otp || otp.trim().length !== 6) {
+      setError('Please enter a valid 6-digit OTP');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      console.log('Attempting password reset for email:', email);
       await resetPassword(email, otp.trim(), newPassword);
       setMessage('Password reset successfully! Redirecting to login...');
       setTimeout(() => {
@@ -61,7 +77,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
           <CardTitle className="text-xl">Reset Password</CardTitle>
         </div>
         <CardDescription>
-          Enter the OTP sent to {email} and your new password.
+          Enter the OTP sent to <strong>{email || 'your email'}</strong> and your new password.
         </CardDescription>
       </CardHeader>
       <CardContent>
