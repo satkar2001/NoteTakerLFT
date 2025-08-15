@@ -71,7 +71,7 @@ The application follows a full-stack architecture. The frontend is a single page
 - JWT for stateless authentication
 - bcrypt for secure password hashing
 - Nodemailer for email functionality
-- Swagger/OpenAPI for API documentation
+- Swagger for API documentation
 
 ## Getting Started
 
