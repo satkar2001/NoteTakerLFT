@@ -9,6 +9,11 @@ A minimal but feature-rich and elegant full-stack note-taking application that h
 **Try it live:** https://notetaker-frontend.onrender.com/
 
 **API Documentation:** https://notetaker-backend-jpgb.onrender.com/api-docs/#/
+![APIDocumentation](/frontend/public/swagger.png)
+
+**Mobile View**
+![Mobileview](/frontend/public/mobileview.png)
+
 
 ## What This App Does
 
