@@ -10,7 +10,6 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -19,10 +18,8 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         email,
@@ -31,7 +28,6 @@ export const register = async (req: Request, res: Response) => {
       }
     });
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       JWT_SECRET,
@@ -57,7 +53,6 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -66,13 +61,11 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       JWT_SECRET,
@@ -103,7 +96,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     console.log('Forgot password request for:', email);
 
-    // Find user
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -113,19 +105,16 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check if there's already a recent OTP request (within last 30 seconds)
     if (user.resetTokenExpiry && user.resetTokenExpiry > new Date(Date.now() - 30 * 1000)) {
       console.log('Recent OTP already exists for:', email);
       return res.json({ message: 'Reset email sent successfully' });
     }
 
-    // Generate OTP
     const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minute ko expiry 
 
     console.log('Generated OTP for', email, ':', { otp, expiry: otpExpiry });
 
-    // Save OTP to database
     await prisma.user.update({
       where: { email },
       data: {
@@ -136,7 +125,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     console.log('OTP saved to database for:', email);
 
-    // Send OTP email
     const emailSent = await sendOTPEmail(email, otp, user.name || undefined);
     
     if (!emailSent) {
@@ -158,7 +146,6 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     console.log('Reset password attempt:', { email, otp: otp ? 'PROVIDED' : 'MISSING', newPasswordLength: newPassword?.length });
 
-    // First check if user exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -175,7 +162,6 @@ export const resetPassword = async (req: Request, res: Response) => {
       currentTime: new Date()
     });
 
-    // Check if OTP matches and is not expired
     if (!existingUser.resetToken || String(existingUser.resetToken).trim() !== String(otp).trim()) {
       console.log('OTP mismatch:', { 
         stored: existingUser.resetToken, 
@@ -193,10 +179,8 @@ export const resetPassword = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid or expired OTP' });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update password and clear reset token
     await prisma.user.update({
       where: { email },
       data: {
