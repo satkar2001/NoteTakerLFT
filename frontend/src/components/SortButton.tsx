@@ -44,7 +44,6 @@ const SortButton: React.FC<SortButtonProps> = ({ sortOptions, onSortChange }) =>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48 p-2 bg-white border border-gray-200 shadow-lg">
-        {/* Sort By Options */}
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Sort By</p>
           <DropdownMenuItem
@@ -80,7 +79,6 @@ const SortButton: React.FC<SortButtonProps> = ({ sortOptions, onSortChange }) =>
 
         <DropdownMenuSeparator />
 
-        {/* Sort Order Options */}
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Order</p>
           <DropdownMenuItem

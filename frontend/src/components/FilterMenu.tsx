@@ -61,7 +61,6 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange, 
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-64 p-2 bg-white border border-gray-200 shadow-lg">
-        {/* Favorites Filter */}
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Quick Filters</p>
           <DropdownMenuItem
@@ -79,7 +78,6 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange, 
 
         <DropdownMenuSeparator />
 
-        {/* Tags Filter */}
         <div className="px-2 py-1.5">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Tags</p>
           <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -110,7 +108,6 @@ const FilterMenu: React.FC<FilterMenuProps> = ({ filterOptions, onFilterChange, 
 
         <DropdownMenuSeparator />
 
-        {/* Reset Button */}
         <div className="px-2 py-1.5">
           <Button
             variant="outline"

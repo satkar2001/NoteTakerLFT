@@ -246,7 +246,6 @@ const Home: React.FC = () => {
         />
 
         <main className="flex-1 p-3 sm:p-6 lg:p-8">
-          {/* Stats Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 lg:mb-8 space-y-4 sm:space-y-0">
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900">Your Notes</h2>
@@ -291,8 +290,7 @@ const Home: React.FC = () => {
         </main>
       </div>
 
-             {/* Auth Dialog */}
-               <AuthDialog
+        <AuthDialog
           open={showAuthDialog}
           onOpenChange={setShowAuthDialog}
           isAuthMode={isAuthMode}

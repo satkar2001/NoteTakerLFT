@@ -42,7 +42,6 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
-        {/* Search - Desktop */}
         <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -54,7 +53,6 @@ const Header: React.FC<HeaderProps> = ({
           />
         </div>
         
-        {/* Search - Mobile */}
         <div className="relative md:hidden">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -66,7 +64,6 @@ const Header: React.FC<HeaderProps> = ({
           />
         </div>
 
-        {/* View Toggle */}
         <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -86,7 +83,6 @@ const Header: React.FC<HeaderProps> = ({
           </Button>
         </div>
 
-        {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105">

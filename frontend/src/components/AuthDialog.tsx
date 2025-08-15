@@ -114,7 +114,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             </div>
           )}
           
-          {/* Conditional Content */}
           {isAuthMode === 'forgot-password' ? (
             <ForgotPasswordDialog
               onBack={() => setIsAuthMode('login')}
@@ -136,7 +135,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             />
           ) : (
             <>
-              {/* Form Fields */}
               <form onSubmit={handleSubmit} className="space-y-4">
             {isAuthMode === 'register' && (
               <div>
