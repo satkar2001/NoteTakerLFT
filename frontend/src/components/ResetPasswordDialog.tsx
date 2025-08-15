@@ -39,7 +39,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
     }
 
     try {
-      await resetPassword(email, otp, newPassword);
+      await resetPassword(email, otp.trim(), newPassword);
       setMessage('Password reset successfully! Redirecting to login...');
       setTimeout(() => {
         onSuccess();
@@ -71,14 +71,14 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
               One-Time Password (OTP)
             </label>
             <Input
-              id="otp"
-              type="text"
-              placeholder="Enter 6-digit OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              maxLength={6}
-              required
-              disabled={isLoading}
+            id="otp"
+            type="text"
+            placeholder="Enter 6-digit OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\s/g, ''))}
+            maxLength={6}
+            required
+            disabled={isLoading}
             />
           </div>
 

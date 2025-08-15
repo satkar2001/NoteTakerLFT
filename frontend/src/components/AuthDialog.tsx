@@ -21,6 +21,7 @@ interface AuthDialogProps {
   onResetPasswordSuccess?: () => void;
   isLoading: boolean;
   error: string;
+  resetEmail?: string;
 }
 
 interface ValidationErrors {
@@ -39,6 +40,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   onResetPasswordSuccess,
   isLoading,
   error,
+  resetEmail,
 }) => {
   const [formData, setFormData] = useState({
     email: '',
@@ -126,7 +128,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
             />
           ) : isAuthMode === 'reset-password' ? (
             <ResetPasswordDialog
-              email={formData.email}
+              email={resetEmail || formData.email}
               onBack={() => setIsAuthMode('forgot-password')}
               onSuccess={() => {
                 if (onResetPasswordSuccess) {

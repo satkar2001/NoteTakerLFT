@@ -39,6 +39,7 @@ const Home: React.FC = () => {
   
   const [isAuthSubmitLoading, setIsAuthSubmitLoading] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
 
   useEffect(() => {
     const checkAuth = () => {
@@ -205,7 +206,8 @@ const Home: React.FC = () => {
     setIsAuthMode('login');
   };
 
-  const handleForgotPasswordSuccess = () => {
+  const handleForgotPasswordSuccess = (email: string) => {
+    setResetEmail(email);
     setIsAuthMode('reset-password');
   };
 
@@ -300,6 +302,7 @@ const Home: React.FC = () => {
           onResetPasswordSuccess={handleResetPasswordSuccess}
           isLoading={isAuthSubmitLoading}
           error={authError}
+          resetEmail={resetEmail}
         />
     </div>
   );
