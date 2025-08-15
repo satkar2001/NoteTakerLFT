@@ -64,6 +64,7 @@ The application follows a full-stack architecture. The frontend is a single page
 - React with TypeScript for type-safe component development
 - Tailwind CSS for utility-first styling
 - shadcn/ui for consistent, accessible component library
+- Tanstack query for data fetching/caching
 
 **Backend Stack:**
 - Node.js with Express framework for the REST API
