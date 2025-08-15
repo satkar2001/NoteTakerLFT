@@ -61,12 +61,9 @@ The diagram was created using eraser.io . Visit my workspace :https://app.eraser
 The application follows a full-stack architecture. The frontend is a single page React application that communicates with a Node.js backend. User data is stored in PostgreSQL, and localStorage is also used for offline note saving etc.
 
 **Frontend Stack:**
-- React 18 with TypeScript for type-safe component development
-- Vite for fast development and optimized production builds
+- React with TypeScript for type-safe component development
 - Tailwind CSS for utility-first styling
 - shadcn/ui for consistent, accessible component library
-- TipTap editor for rich text editing capabilities
-- Axios for HTTP client with interceptors
 
 **Backend Stack:**
 - Node.js with Express framework for the REST API
