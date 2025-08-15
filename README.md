@@ -99,7 +99,7 @@ To run the full application, you'll need to set up:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/NoteTakerLFT.git
+git clone https://github.com/satkar2001/NoteTakerLFT.git
 cd NoteTakerLFT
 ```
 
