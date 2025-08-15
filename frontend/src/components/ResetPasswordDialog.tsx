@@ -57,7 +57,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({ email, onBack
     try {
       console.log('Attempting password reset for email:', email);
       await resetPassword(email, otp.trim(), newPassword);
-      setMessage('Password reset successfully! Redirecting to login...');
+      setMessage('Password reset successfully! Please login with your new password');
       setTimeout(() => {
         onSuccess();
       }, 2000);

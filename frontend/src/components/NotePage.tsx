@@ -190,20 +190,20 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
               placeholder="Note title..."
               value={note.title || ''}
               onChange={(e) => setNote(prev => ({ ...prev, title: e.target.value }))}
-              className="text-3xl font-semibold border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 py-2"
+              className="text-3xl font-semibold border-0 border-b border-gray-200 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 py-2 rounded-none"
             />
           </div>
-
+          
           <div>
             <Input
               type="text"
               placeholder="Categories/Tags (Keep them comma separated)"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              className="border-gray-200"
+              className="border-0 border-b border-gray-200 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 py-2 rounded-none "
             />
           </div>
-
+          
           <div className="flex-1">
             <Textarea
               placeholder="Start writing your note..."
@@ -212,11 +212,11 @@ const NotePage: React.FC<NotePageProps> = ({ isNewNote = false }) => {
               className="min-h-[500px] text-lg leading-relaxed border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 py-2 resize-none"
             />
           </div>
-
+          
           {!isAuthenticated() && (
             <div className="text-center py-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-700 text-sm">
-                💡 This note is saved locally. <button onClick={() => navigate('/')} className="underline font-medium">Sign in</button> to save it permanently!
+                This note is saved locally. <button onClick={() => navigate('/')} className="underline font-medium">Sign in</button> to save it permanently!
               </p>
             </div>
           )}
